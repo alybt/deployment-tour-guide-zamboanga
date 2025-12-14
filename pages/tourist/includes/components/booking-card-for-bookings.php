@@ -71,7 +71,7 @@
                                     </a>
                                 <?php endif; ?>
                                 
-                                <a href="booking-cancel.php?id=<?= $booking['booking_ID'] ?>" class="btn btn-danger btn-sm cancel-booking flex-fill d-flex justify-content-center align-items-center" data-name="<?= $tourName ?>" style="opacity: 0.8;">
+                                <a href="booking-cancel.php?id=<?= $booking['booking_ID'] ?>" class="btn btn-danger btn-sm cancel-booking flex-fill d-flex justify-content-center align-items-center" data-name="<?= $tourName ?>" style="opacity: 0">
                                     <i class="fas fa-trash-alt me-1"></i> Cancel
                                 </a>
                             </div>

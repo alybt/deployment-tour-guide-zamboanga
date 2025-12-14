@@ -93,7 +93,7 @@ $payment = $bookingObj->getPaymentInfoByBookingID($booking_ID);
             <?php endif; ?>
 
             <!-- Booking Status -->
-            <div style="text-align: center;">
+            <div style="text-align: cen">
                 <span class="status-badge status-<?= strtolower(str_replace(' ', '-', $booking['booking_status'])) ?>">
                     <?= htmlspecialchars($booking['booking_status']) ?>
                 </span>
@@ -119,9 +119,9 @@ $payment = $bookingObj->getPaymentInfoByBookingID($booking_ID);
                         </div>
                     </div>
                 </div>
-                <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="margin-top: 15px; padding: 15px; background: #f8f9fa;">
                     <div class="info-label">Description</div>
-                    <p style="margin-top: 5px; color: #333;"><?= htmlspecialchars($package['tourpackage_desc']) ?></p>
+                    <p style="margin-top: 5px;"><?= htmlspecialchars($package['tourpackage_desc']) ?></p>
                 </div>
             </div>
 
@@ -134,7 +134,7 @@ $payment = $bookingObj->getPaymentInfoByBookingID($booking_ID);
                         <div class="info-value">
                             <?= date('F d, Y', strtotime($booking['booking_start_date'])) ?>
                         </div>
-                        <div style="margin-top: 5px; font-size: 14px; color: #6c757d;">
+                        <div style="margin-top: 5px; font-size: 14px;">
                             <?= date('l', strtotime($booking['booking_start_date'])) ?>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ $payment = $bookingObj->getPaymentInfoByBookingID($booking_ID);
                         <div class="info-value">
                             <?= date('F d, Y', strtotime($booking['booking_end_date'])) ?>
                         </div>
-                        <div style="margin-top: 5px; font-size: 14px; color: #6c757d;">
+                        <div style="margin-top: 5px; font-size: 14px;">
                             <?= date('l', strtotime($booking['booking_end_date'])) ?>
                         </div>
                     </div>
@@ -195,7 +195,7 @@ $payment = $bookingObj->getPaymentInfoByBookingID($booking_ID);
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
-                <div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 8px; font-size: 14px;">
+                <div style="margin-top: 15px; padding: 10px; background: #e7f3ff;">
                     <strong>Total Travelers:</strong> 
                     <?= ($booking['booking_isselfincluded'] ? 1 : 0) + count($companions) ?> person(s)
                 </div>

@@ -1,13 +1,13 @@
 <!-- card-template.php -->
 <?php
 ?>
-<div class="col" style = "height: 30rem" >
+<div class="col" style="height: 30" >
     <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden" >
         <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
             <img src="https://mdbootstrap.com/img/Photos/Horizontal/Food/8-col/img (5).jpg"
-                 class="img-fluid w-100 rounded-top" style="height: 200px; object-fit: cover;"
+                 class="img-fluid w-100 rounded-top" style="height: 200px;"
                  alt="<?= htmlspecialchars($package['tourpackage_name']) ?>" />
-            <a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.15);"></div></a>
+            <a href="#!"><div class="mask" style="background-color: rgba(251,251,2"></div></a>
         </div>
 
         <div class="card-body d-flex flex-column">

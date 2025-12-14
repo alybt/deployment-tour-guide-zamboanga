@@ -203,7 +203,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <label for="booking_end_date">End Date:</label>
             <input type="date" name="booking_end_date" id="booking_end_date" readonly required>
-            <div id="overlapWarning" style="color:red; display:none;">
+            <div id="overlapWarning" style="color:red;">
                 ⚠️ The selected dates overlap with another booking for this guide.
             </div>
 

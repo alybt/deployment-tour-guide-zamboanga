@@ -124,7 +124,7 @@ $bookings = $bookingObj->getBookingHistoryByGuideID($guide_ID);
                                     <td><?= $no++ ?></td>
                                     <td><?= date('M d, Y', strtotime($booking['booking_date'])) ?></td>
                                     <td><?= htmlspecialchars($booking['booking_ID']) ?></td>
-                                    <td class="text-truncate" style="max-width: 180px;">
+                                    <td class="text-truncate" style="max-width: 18">
                                         <?= htmlspecialchars($booking['tourpackage_name']) ?>
                                     </td>
                                     <td><?= date('M d, Y', strtotime($booking['tour_date'])) ?> days</td>

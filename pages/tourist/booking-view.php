@@ -368,9 +368,9 @@ $statusColor = match($booking['booking_status']) {
                         <span class="info-label">Processing Fee</span>
                         <span class="info-value"><?= $transactionDetails['Processing_Fee_Rate'] ?></span>
                     </div>
-                    <div class="info-row" style="border-top: 2px solid var(--accent); margin-top: 15px; padding-top: 15px;">
+                    <div class="info-row" style="border-top: 2px solid var(--accent); margin-top: 15px;">
                         <span class="info-label"><strong>Total Paid</strong></span>
-                        <span class="info-value" style="font-size: 1.3rem; color: var(--accent);"> <?= $transactionDetails['Total_Amount_Paid'] ?></span>
+                        <span class="info-value" style="font-size: 1.3rem;"> <?= $transactionDetails['Total_Amount_Paid'] ?></span>
                     </div>
                 </div>
 
@@ -416,9 +416,9 @@ $statusColor = match($booking['booking_status']) {
                 </div>
 
                 <!-- Important Info -->
-                <div class="detail-card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
-                    <h6 style="color: #856404;"><i class="fas fa-exclamation-triangle me-2"></i> Important</h6>
-                    <ul class="mb-0" style="color: #856404; font-size: 0.9rem;">
+                <div class="detail-card" style="background: #fff3cd;">
+                    <h6 style="color: #8564"><i class="fas fa-exclamation-triangle me-2"></i> Important</h6>
+                    <ul class="mb-0" style="color: #856404;">
                         <li>Please arrive 10 minutes early</li>
                         <li>Bring comfortable walking shoes</li>
                         <li>Water and snacks recommended</li>

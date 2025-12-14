@@ -167,20 +167,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             </span>
                         </a>
 
-                        <ul id="notification-dropdown" class="dropdown-menu dropdown-menu-end mt-2 shadow-lg border-0" style="width: 380px; max-width: 95vw;">
-                            <li class="dropdown-header bg-primary text-white py-3 rounded-top" style="background-color: var(--secondary-color) !important;">
+                        <ul id="notification-dropdown" class="dropdown-menu dropdown-menu-end mt-2 shadow-lg border-0" style="width: 380px;">
+                            <li class="dropdown-header bg-primary text-white py-3 rounded-top" style="background-color: var(--secondary-color) ">
                                 <div class="d-flex justify-content-between align-items-center px-3">
                                     <strong>Notifications</strong>
-                                    <span class="badge bg-light text-primary" style="color: var(--secondary-color) !important; background-color: var(--secondary-accent) !important;"><?= count($touristNotification) ?></span>
+                                    <span class="badge bg-light text-primary" style="color: var(--secondary-color) !i"><?= count($touristNotification) ?></span>
                                 </div>
                             </li>
 
-                            <div id="notification-list-container" class="px-2" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
+                            <div id="notification-list-container" class="px-2" style="max-height: 70vh; overflow-y: auto;">
                                 <?php require_once "components/notification-list.php";  ?>
                             </div>
 
                             <li><hr class="dropdown-divider my-0"></li>
-                            <li><a class="dropdown-item text-center py-3 fw-bold" href="notifications.php" style="color: var(--secondary-color) !important;">View All Notifications</a></li>
+                            <li><a class="dropdown-item text-center py-3 fw-bold" href="notifications.php" style="color: var(--secondary-color) !i">View All Notifications</a></li>
                         </ul>
                     </li>
                     

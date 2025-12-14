@@ -220,7 +220,7 @@ $paymentData = $paymentObj->getPaymentByBooking($booking_ID);
         </div>
         <div class="detail-row">
             <span class="detail-label">Amount Paid:</span>
-            <span class="detail-value" style="font-weight: 700; color: #1a5d1a;">
+            <span class="detail-value" style="font-weight: 700;">
                 ₱<?= number_format($paymentData['paymentinfo_total_amount'] ?? 0, 2) ?>
             </span>
         </div>

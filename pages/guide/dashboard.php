@@ -86,7 +86,7 @@ $totalRatings = round((float)$origTotalRating, 1);
             <div class="col-md-6 col-lg-3">
                 <div class="card stat-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E, #f39c12);">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E">
                             <i class="bi bi-calendar-check"></i>
                         </div>
                         <div>
@@ -100,12 +100,12 @@ $totalRatings = round((float)$origTotalRating, 1);
             <div class="col-md-6 col-lg-3">
                 <div class="card stat-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #213638, #2e8b57);">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #213638">
                             <i class="bi bi-box-seam"></i>
                         </div>
                         <div>
                             <h6 class="mb-0 text-muted">Tour Packages</h6>
-                            <h3 class="mb-0 fw-bold" style="color: var(--secondary-color);"><?= $totalofActivePackages ?? '' ?></h3>
+                            <h3 class="mb-0 fw-bold" style="color: var(--secondary-c"><?= $totalofActivePackages ?? '' ?></h3>
                         </div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@ $totalRatings = round((float)$origTotalRating, 1);
             <div class="col-md-6 col-lg-3">
                 <div class="card stat-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E, #f1c40f);">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E">
                             <i class="bi bi-currency-dollar"></i>
                         </div>
                         <div>
@@ -128,12 +128,12 @@ $totalRatings = round((float)$origTotalRating, 1);
             <div class="col-md-6 col-lg-3">
                 <div class="card stat-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #CFE7E5, #a8e6cf);">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #CFE7E5">
                             <i class="bi bi-star-fill"></i>
                         </div>
                         <div>
                             <h6 class="mb-0 text-muted">Rating</h6>
-                            <h3 class="mb-0 fw-bold" style="color: #27ae60;"><?= number_format($totalRatings, 1) ?></h3>
+                            <h3 class="mb-0 fw-bold" style="color: #27ae"><?= number_format($totalRatings, 1) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@ $totalRatings = round((float)$origTotalRating, 1);
                                     <tr>
                                         <td><?= $no++ ?></td>
                                         <td><strong><?= htmlspecialchars($booking['tourpackage_name']) ?></strong></td>
-                                        <td class="text-truncate" style="max-width: 180px;">
+                                        <td class="text-truncate" style="max-width: 18">
                                             <?= htmlspecialchars($booking['tourpackage_desc']) ?>
                                         </td>
                                         <td><?= htmlspecialchars($booking['schedule_days']) ?> days</td>
@@ -207,7 +207,7 @@ $totalRatings = round((float)$origTotalRating, 1);
                                                 <?= htmlspecialchars($status) ?>
                                             </span>
                                         </td>
-                                        <td class="text-truncate" style="max-width: 120px;">
+                                        <td class="text-truncate" style="max-width: 12">
                                             <?= htmlspecialchars($booking['tour_spots'] ?? '—') ?>
                                         </td>
                                         <td>

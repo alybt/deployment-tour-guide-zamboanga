@@ -209,7 +209,7 @@ $ratingCount = $rating['count'] ?? 0;
                              class="profile-pic">
                     <?php else: ?>
                         <div class="profile-pic bg-secondary d-flex align-items-center justify-content-center">
-                            <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                            <i class="bi bi-person-fill text-white" style="font-size: 3"></i>
                         </div>
                     <?php endif; ?>
                     
@@ -282,7 +282,7 @@ $ratingCount = $rating['count'] ?? 0;
                         </span>
                         <p class="mb-0">
                             <i class="bi bi-envelope"></i> 
-                            <a href="mailto:<?= htmlspecialchars($guideData['guide_email']) ?>" style="color: var(--accent);">
+                            <a href="mailto:<?= htmlspecialchars($guideData['guide_email']) ?>" style="color: var(--acc">
                                 <?= htmlspecialchars($guideData['guide_email']) ?>
                             </a>
                         </p>
@@ -291,7 +291,7 @@ $ratingCount = $rating['count'] ?? 0;
                 
                 <div class="mt-5">
                     <h3 class="mb-4">
-                        <i class="bi bi-map-fill" style="color: var(--accent);"></i> 
+                        <i class="bi bi-map-fill" style="color: var(--acc"></i> 
                         Tour Packages
                     </h3>
                         <?php 
@@ -340,7 +340,7 @@ $ratingCount = $rating['count'] ?? 0;
                         <a href="index.php" class="btn btn-outline-secondary w-100 mb-2">
                             <i class="bi bi-arrow-left"></i> Back to Guides
                         </a>
-                        <a href="booking-add.php?guide_id=<?= $guide_ID ?>" class="btn w-100" style="background: var(--accent); color: var(--secondary-color);">
+                        <a href="booking-add.php?guide_id=<?= $guide_ID ?>" class="btn w-100" style="background: var(--accent);">
                             <i class="bi bi-calendar-check"></i> Book Now
                         </a>
                     </div>

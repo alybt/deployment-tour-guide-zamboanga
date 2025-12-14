@@ -97,7 +97,7 @@ $spots = $tourManager->getSpotsByPackage($tourpackage_ID);
                                 <p class="ms-1">
                                     <i class="fas fa-user-tie text-primary"></i>
                                     <?php if ($guideID): ?>
-                                        <a href="guide_profile.php?guide_id=<?= $guideID ?>" class="text-decoration-none fw-bold" style="color: #007bff;">
+                                        <a href="guide_profile.php?guide_id=<?= $guideID ?>" class="text-decoration-none fw-bold" style="color: #007b">
                                             <?= $guideName ?>
                                         </a>
                                     <?php else: ?>

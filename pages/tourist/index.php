@@ -261,7 +261,7 @@ $topfiveguides = $guideObj->viewTop5GuideInfoByRate();
                     </div>
                 </div>
                 <div class="col-md-4 text-center d-none d-md-block">
-                    <i class="fas fa-globe-americas" style="font-size: 8rem; color: var(--secondary-accent); opacity: 0.3;"></i>
+                    <i class="fas fa-globe-americas" style="font-size: 8rem; color: var(--secondary-accent);"></i>
                 </div>
             </div>
         </div>

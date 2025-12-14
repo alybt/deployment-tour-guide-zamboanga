@@ -218,11 +218,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label>Select Tourist Spots (Optional):</label><br>
             <div class="checkbox-list">
                 <?php foreach ($spots as $spot): ?>
-                    <label style="display: block; margin: 8px 0;">
+                    <label style="display: block;">
                         <input type="checkbox" name="spots[]" value="<?= $spot['spots_ID'] ?>"
                             <?= in_array($spot['spots_ID'], $tourPackage['spots'] ?? []) ? 'checked' : '' ?>>
                         <strong><?= htmlspecialchars($spot['spots_name']) ?></strong>
-                        <small style="color: #666; display: block;">
+                        <small style="color: #666;">
                             <?= htmlspecialchars($spot['spots_description']) ?>
                         </small>
                     </label>
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <br>
 
-        <button type="submit" style="padding: 10px 20px; font-size: 16px;">Add Package</button>
+        <button type="submit" style="padding: 10px 20px;">Add Package</button>
     </form>
     <!-- Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum maiores laborum dolorem doloribus tempore nulla debitis provident tempora beatae deleniti officiis consequatur, minima modi magnam dicta expedita numquam corporis delectus? !-->
 </body>

@@ -197,11 +197,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div>
             <label>Select Tourist Spots:</label><br>
             <?php foreach ($spots as $spot): ?>
-                <label style="display: block; margin: 8px 0;">
+                <label style="display: block;">
                     <input type="checkbox" name="spots[]" value="<?= $spot['spots_ID'] ?>"
                         <?= in_array($spot['spots_ID'], $package['spots']) ? 'checked' : '' ?>>
                     <strong><?= htmlspecialchars($spot['spots_name']) ?></strong>
-                    <small style="color: #666; display: block;">
+                    <small style="color: #666;">
                         <?= htmlspecialchars($spot['spots_description']) ?>
                     </small>
                 </label>

@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirm_delete'])) {
                 <?php foreach ($spots as $spot): ?>
                 <li>
                     <strong><?php echo htmlspecialchars($spot['spots_name']); ?></strong>
-                    <div style="margin-left: 20px; color: #666;">
+                    <div style="margin-left: 20px;">
                         <?php echo htmlspecialchars($spot['spots_description']); ?>
                     </div>
                 </li>

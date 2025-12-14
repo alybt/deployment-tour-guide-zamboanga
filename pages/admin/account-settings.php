@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                          alt="Profile" class="profile-preview">
                                 <?php else: ?>
                                     <div class="profile-preview bg-secondary d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-person-fill text-white" style="font-size: 2rem;"></i>
+                                        <i class="bi bi-person-fill text-white" style="font-size: 2"></i>
                                     </div>
                                 <?php endif; ?>
                             </div>

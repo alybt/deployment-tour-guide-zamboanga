@@ -264,7 +264,7 @@ $pkg = $_SESSION['old_input'] ?? [
                             <label class="form-check-label" for="include_meal">Include Meal</label>
                         </div>
                     </div>
-                    <div class="col-md-4" id="mealFeeContainer" style="<?= $pkg['include_meal'] ? '' : 'display:none;' ?>">
+                    <div class="col-md-4" id="mealFeeContainer" style="<?= $pkg['include_meal'] ? '' : 'display">
                         <label class="form-label">Meal Fee</label>
                         <input type="number" step="0.01" name="meal_fee" class="form-control" value="<?= htmlspecialchars($pkg['meal_fee']) ?>">
                     </div>

@@ -202,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
 
         <?php if ($rebookData): ?>
-            <div style="background:#e8f7ff; padding:10px; border-left:4px solid #007bff;">
+            <div style="background:#e8f7ff; padding:10px;">
                 <strong>Rebooking:</strong> This form is pre-filled from your cancelled booking #<?= htmlspecialchars($oldBookingID) ?>.
             </div>
         <?php endif; ?>
@@ -217,7 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <input type="date" name="booking_end_date" id="booking_end_date"
                     value="<?= htmlspecialchars($rebookData['booking_end_date'] ?? '') ?>" readonly required>
 
-            <div id="overlapWarning" style="color:red; display:none;">
+            <div id="overlapWarning" style="color:red;">
                 The selected dates overlap with another booking for this guide.
             </div>
 

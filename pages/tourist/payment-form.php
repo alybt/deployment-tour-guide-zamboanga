@@ -332,10 +332,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- ERROR MESSAGES -->
     <?php if (!empty($errors)): ?>
-        <div style="grid-column: 1 / -1; background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <h3 style="color: #c33; margin: 0 0 10px 0;">⚠️ Payment Error</h3>
+        <div style="grid-column: 1 / -1; background: #fee; border: 1px solid #fcc; border-radius: 8px;">
+            <h3 style="color: #c33;">⚠️ Payment Error</h3>
             <?php foreach ($errors as $error): ?>
-                <p style="margin: 5px 0; color: #c33;"><?= htmlspecialchars($error) ?></p>
+                <p style="margin: 5px 0;"><?= htmlspecialchars($error) ?></p>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
@@ -359,12 +359,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <?php if ($totalNumberOfPeople > 0 && !empty($companions)): ?>
-        <h3 style="margin: 25px 0 10px; color: #1a5d1a;">Travel Companions</h3>
-        <ul style="margin: 0; padding-left: 20px;">
+        <h3 style="margin: 25px 0 10px;">Travel Companions</h3>
+        <ul style="margin: 0;">
             <?php foreach ($companions as $c): ?>
-                <li style="margin: 8px 0;">
+                <li style="margin: 8px">
                     <?= htmlspecialchars($c['companion_name']) ?> 
-                    <small style="color: #666;">
+                    <small style="color: #6">
                         (<?= $c['companion_age'] ?> yrs • <?= $c['companion_category_name'] ?>)
                     </small>
                 </li>
@@ -372,27 +372,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </ul>
         <?php endif; ?>
 
-        <h3 class="section-title" style="margin-top: 30px;">Fee Breakdown</h3>
+        <h3 class="section-title" style="margin-top: 3">Fee Breakdown</h3>
         <table id="feeBreakdown">
             <thead>
                 <tr>
                     <th>Category</th>
-                    <th style="text-align: right;">Qty</th>
-                    <th style="text-align: right;">Amount</th>
+                    <th style="text-align: ri">Qty</th>
+                    <th style="text-align: ri">Amount</th>
                 </tr>
             </thead>
             <tbody id="feeBreakdownBody"></tbody>
             <tfoot>
                 <tr class="total-row">
                     <td colspan="2"><strong>Grand Total (After Discount)</strong></td>
-                    <td style="text-align: right; font-size: 1.2rem; color: #1a5d1a;" id="grandTotal">₱0.00</td>
+                    <td style="text-align: right; font-size: 1.2rem;" id="grandTotal">₱0.00</td>
                 </tr>
             </tfoot>
         </table>
 
         <div class="highlight-box">
             <strong>Total Amount to Pay:</strong> 
-            <span id="finalPayable" style="font-size: 1.4rem; color: #1a5d1a;">₱0.00</span>
+            <span id="finalPayable" style="font-size: 1.4rem;">₱0.00</span>
         </div>
     </div>
 
@@ -426,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label><strong>Total Amount to Pay</strong></label>
-                <input type="text" id="method_amount" readonly style="font-size: 1.4rem; font-weight: bold; color: #1a5d1a;">
+                <input type="text" id="method_amount" readonly style="font-size: 1.4rem; font-weight: bold;">
                 <input type="hidden" name="method_amount" value="0">
             </div>
 
@@ -442,8 +442,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label>Phone Number</label>
-                <div style="display: flex; gap: 10px;">
-                    <select name="country_ID" id="country_ID" style="width: 40%;">
+                <div style="display: flex;">
+                    <select name="country_ID" id="country_ID" style="width: 4">
                         <option value="">Code</option>
                         <?php foreach ($touristObj->fetchCountryCode() as $c): ?>
                             <option value="<?= $c['country_ID'] ?>" 
@@ -460,7 +460,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <fieldset class="address-section">
                 <legend>Billing Address</legend>
                 <input type="text" name="method_line1" placeholder="Street Address" required>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <input type="text" name="method_city" placeholder="City" required>
                     <input type="text" name="method_postalcode" placeholder="Postal Code" required>
                 </div>
@@ -468,8 +468,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </fieldset>
 
             <!-- Card Section -->
-            <div id="cardSection" style="display:none; margin-top: 20px;">
-                <h3 style="color: #1a5d1a; margin-bottom: 15px;">Card Details</h3>
+            <div id="cardSection" style="display:none;">
+                <h3 style="color: #1a5d1a;">Card Details</h3>
                 <div class="form-group">
                     <label>Card Number</label>
                     <input type="text" name="method_cardnumber" maxlength="19" placeholder="1234 5678 9012 3456">
@@ -544,8 +544,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const baseRow = document.createElement('tr');
                 baseRow.innerHTML = `
                     <td>${category}</td>
-                    <td style="text-align: right">${data.qty}</td>
-                    <td style="text-align: right">₱${data.baseTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="text-align: r">${data.qty}</td>
+                    <td style="text-align: r">₱${data.baseTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(baseRow);
 
@@ -557,9 +557,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 const mealRow = document.createElement('tr');
                 mealRow.innerHTML = `
-                    <td style="padding-left: 20px;">Meal Fee</td>
-                    <td style="text-align: right">${data.qty}</td>
-                    <td style="text-align: right">₱${mealTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="padding-left: 2">Meal Fee</td>
+                    <td style="text-align: r">${data.qty}</td>
+                    <td style="text-align: r">₱${mealTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(mealRow);
                 categorySubtotal += mealTotal;
@@ -576,9 +576,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 const transportRow = document.createElement('tr');
                 transportRow.innerHTML = `
-                    <td style="padding-left: 20px;">Transport Fee</td>
-                    <td style="text-align: right">${data.qty}</td>
-                    <td style="text-align: right">₱${transportTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="padding-left: 2">Transport Fee</td>
+                    <td style="text-align: r">${data.qty}</td>
+                    <td style="text-align: r">₱${transportTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(transportRow);
                 categorySubtotal += transportTotal;
@@ -592,8 +592,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const discountRow = document.createElement('tr');
             discountRow.innerHTML = `
                 <td>Discount</td>
-                <td style="text-align: right">-</td>
-                <td style="text-align: right">-₱${bookingData.discount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td style="text-align: r">-</td>
+                <td style="text-align: r">-₱${bookingData.discount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
             `;
             tbody.appendChild(discountRow);
         }

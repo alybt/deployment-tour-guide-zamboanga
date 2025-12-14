@@ -57,7 +57,7 @@ $tourcategory = $tourmanagerObj->getCategoryandImage();
                     </div>
                 </div>
                 <div class="mt-4">
-                    <small style="opacity: 0.8;">Popular: Sta. Cruz Beach</small>
+                    <small style="opacity: 0">Popular: Sta. Cruz Beach</small>
                 </div>
             </div>
         </div>
@@ -194,8 +194,8 @@ $tourcategory = $tourmanagerObj->getCategoryandImage();
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h3 class="mb-3"><i class="fas fa-map-marked-alt" style="color: var(--accent);"></i> Tourismo Zamboanga</h3>
-                    <p style="color: var(--secondary-accent);">Connecting travelers with authentic local experiences worldwide.</p>
+                    <h3 class="mb-3"><i class="fas fa-map-marked-alt" style="color: var(--acc"></i> Tourismo Zamboanga</h3>
+                    <p style="color: var(--secondary-a">Connecting travelers with authentic local experiences worldwide.</p>
                     <div class="social-icons">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>

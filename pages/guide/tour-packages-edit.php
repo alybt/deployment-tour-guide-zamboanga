@@ -357,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-check-label" for="include_meal">Include Meal</label>
                         </div>
                     </div>
-                    <div class="col-md-4" id="mealFeeContainer" style="<?= $pkg['include_meal'] ? '' : 'display:none;' ?>">
+                    <div class="col-md-4" id="mealFeeContainer" style="<?= $pkg['include_meal'] ? '' : 'display">
                         <label class="form-label">Meal Fee</label>
                         <input type="number" step="0.01" name="meal_fee" class="form-control" value="<?= htmlspecialchars($pkg['meal_fee']) ?>">
                     </div>
@@ -401,7 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label class="form-label">Activity</label>
                                         <input type="text" name="itinerary[<?= $idx ?>][activity_name]" class="form-control" 
                                                value="<?= htmlspecialchars($spot['packagespot_activityname'] ?? '') ?>" 
-                                               style="<?= !empty($spot['spots_ID']) ? 'display:none;' : '' ?>">
+                                               style="<?= !empty($spot['spots_ID']) ? 'display:non">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Start Time</label>

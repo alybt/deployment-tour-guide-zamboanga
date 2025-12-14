@@ -728,7 +728,7 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
                 </div>
 
                 <!-- Typing Indicator (hidden by default) -->
-                <div class="message" id="typingIndicator" style="display: none;">
+                <div class="message" id="typingIndicator" style="display: no">
                     <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
                     <div class="typing-indicator">
                         <span></span>

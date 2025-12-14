@@ -36,12 +36,3 @@ div.action-btn a {
     color: var(--secondary-color) !important;
 
 }
-
-.package-details h4 {
-    color: var(--secondary-color) !important;
-}
-
-.booking-summary .card-header {
-    background-color: var(--accent) !important;
-    color: var(--secondary-color);
-}
