@@ -172,8 +172,6 @@ $tourcategory = $tourmanagerObj->getCategoryandImage();
                             </div>
                         </div>
                     <?php } ?>
-                    
-                ?>
                 
             </div>
         </div>
