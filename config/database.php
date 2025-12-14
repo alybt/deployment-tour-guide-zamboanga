@@ -2,9 +2,9 @@
 
 class Database {
     private $host = "localhost";
-    private $username = "alibitun01318";
-    private $password = "~4FgEUfQ1DG!";
-    private $dbname = "tour";
+    private $username = "u194078580_alibitun01318";
+    private $password = ":JifmCuX7Yw9";
+    private $dbname = "u194078580_tour";
     private $lastError = "";
     protected $conn;
     
