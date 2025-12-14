@@ -4,9 +4,6 @@ paymongo.env
 email.env
 .env
 
-# Composer / vendor files (optional)
-vendor/
-
 # Logs
 *.log
 
