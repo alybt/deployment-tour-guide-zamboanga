@@ -2,18 +2,20 @@
 
 
 require_once __DIR__ . "/../config/database.php";
-require_once "trait/payment-info/method.php";
+require_once "trait/payment-info/method.php"; 
+require_once "trait/payment-info/guide-earning.php";
 require_once "trait/payment-info/transaction-reference.php";
 require_once "trait/payment-info/payment-info.php";
 require_once "trait/payment-info/payment-transaction.php";
 require_once "trait/payment-info/refund.php";
 require_once "trait/payment-info/paymongo.php";
+require_once "trait/payment-info/payout.php";
 require_once "trait/person/trait-phone.php";
 require_once __DIR__ . '/../assets/vendor/autoload.php';
  use Paymongo\Paymongo;
 
 class PaymentManager extends Database{
-    use MethodTrait, TransactionReferenceTrait, PaymentInfo, PaymentTransaction, PhoneTrait, Refund, PayMongoTrait;
+    use MethodTrait, TransactionReferenceTrait, PaymentInfo, PaymentTransaction, PhoneTrait, Refund, PayMongoTrait,PayoutTrait, GuideEarningTrait;
    
     
  // Use Sandbox Secret Key
@@ -24,14 +26,13 @@ class PaymentManager extends Database{
 
         try {
             // Step 1: Add payment info
-            $paymentinfo_ID = $this->addPaymentInfo($booking_ID, $paymentinfo_total_amount, $db);
-            if (!$paymentinfo_ID) {
-                throw new Exception("Failed to insert into Payment_Info table.");
-            }
+            // $paymentinfo_ID = $this->addPaymentInfo($booking_ID, $paymentinfo_total_amount, $db);
+            // if (!$paymentinfo_ID) {
+            //     throw new Exception("Failed to prepare payment information.");
+            // }
 
             // Step 2: Add payment transaction
-            $transaction_ID = $this->addPaymentTransaction(
-                $paymentinfo_ID,
+            $transaction_ID = $this->addPaymentTransaction( 
                 $method_ID,
                 $methodcategory_ID,
                 $method_amount,
@@ -48,6 +49,7 @@ class PaymentManager extends Database{
                 $method_country,
                 $country_ID,
                 $phone_number,
+                $booking_ID, $paymentinfo_total_amount,
                 $db
             );
 
@@ -81,8 +83,7 @@ class PaymentManager extends Database{
 
     public function getPaymentByBooking($booking_ID){
         $sql = "SELECT * FROM booking b 
-                JOIN payment_info pi ON b.booking_ID = pi.booking_ID
-                JOIN payment_transaction pt ON pi.paymentinfo_ID = pt.paymentinfo_ID
+                JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
                 JOIN method m ON m.method_ID = pt.method_ID
                 WHERE b.booking_ID = :booking_ID";
         $db = $this->connect();
@@ -111,12 +112,9 @@ class PaymentManager extends Database{
             if (!$query->execute()) {
                 throw new Exception("Failed to update booking status.");
             }
-            // SELECT * FROM booking b JOIN payment_info pi ON b.booking_ID = pi.booking_ID JOIN payment_transaction pt ON pi.paymentinfo_ID = pt.paymentinfo_ID
-            // SELECT b.booking_ID, b.booking_status, pt.transaction_status FROM booking b JOIN payment_info pi ON b.booking_ID = pi.booking_ID JOIN payment_transaction pt ON pi.paymentinfo_ID = pt.paymentinfo_ID
             $sql = "UPDATE Payment_Transaction pt
-                JOIN Payment_Info pi ON pt.paymentinfo_ID = pi.paymentinfo_ID
                 SET pt.transaction_status = 'Refunded'
-                WHERE pi.booking_ID = :booking_ID;";
+                WHERE pt.booking_ID = :booking_ID";
             $query = $db->prepare($sql);
             $query->bindParam(':booking_ID', $booking_ID);
 
@@ -134,7 +132,7 @@ class PaymentManager extends Database{
         $db->rollBack();
         error_log("[addAllPaymentInfo] " . $e->getMessage());
         return false;
-    }
+        }
     }
 
     public function requestRefund( int $booking_ID, int $tourist_ID,  int $categoryrefund_ID,  string $refund_reason, ?float $custom_refund_amount = null ): array {
@@ -143,16 +141,14 @@ class PaymentManager extends Database{
         try {
             $db->beginTransaction();
 
-            // 1. Get booking + transaction + payment info
+            // 1. Get booking + transaction details
             $sql = "SELECT 
                         b.booking_ID,
                         pt.transaction_ID,
-                        pt.transaction_amount,
-                        pt.paymongo_intent_id,
-                        pi.paymentinfo_total_amount
+                        pt.transaction_total_amount,
+                        pt.paymongo_intent_id
                     FROM booking b
-                    JOIN Payment_Info pi ON b.booking_ID = pi.booking_ID
-                    JOIN Payment_Transaction pt ON pi.paymentinfo_ID = pt.paymentinfo_ID
+                    JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
                     WHERE b.booking_ID = :booking_ID 
                     AND b.tourist_ID = :tourist_ID
                     AND pt.transaction_status = 'Paid'
@@ -169,7 +165,7 @@ class PaymentManager extends Database{
                 throw new Exception("No paid PayMongo transaction found for this booking.");
             }
 
-            $originalAmount = (float)$transaction['transaction_amount'];
+            $originalAmount = (float)$transaction['transaction_total_amount'];
             $refundAmount = $custom_refund_amount ?? $originalAmount;
 
             if ($refundAmount > $originalAmount) {

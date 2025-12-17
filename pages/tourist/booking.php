@@ -135,7 +135,10 @@ function getTimeRemaining($date_string) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css">
+
+    <link rel="stylesheet" href="../../assets/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/tourist/booking-test.css">
+
 </head>
 <body>
     
@@ -171,7 +174,7 @@ function getTimeRemaining($date_string) {
             <div class="col-lg-5">
                 <h4 class="mb-4"><i class="fas fa-list-ul me-2"></i>Active Bookings List</h4>
                 <a href="booking-history.php" class="btn btn-outline-primary mb-3"><i class="fas fa-history me-2"></i>Booking History</a>
-                <div id="booking-list-container" style="max-height: 800px;">
+                <div id="booking-list-container" style="max-height: 800px; overflow-y: auto;">
                     <?php 
                         include 'includes\components\booking-card-for-bookings.php';
                     ?>
@@ -181,7 +184,14 @@ function getTimeRemaining($date_string) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script src="../../assets/node_modules/jquery/dist/jquery.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="../../assets/node_modules/@fullcalendar/core/index.global.min.js"></script>
+    <script src="../../assets/node_modules/@fullcalendar/daygrid/index.global.min.js"></script>
 
     <script>
         $(document).ready(function() {

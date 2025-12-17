@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <p><strong>Guide License Number:</strong> {$license}</p>
                         <p>Your registration is pending admin approval. You will be notified once approved.</p>
                         <p>You can log in and view your profile at:</p>
-                        <p><a href='https://yourdomain.com/login.php' style='background-color: #28a745; color: white; padding: 10px 20px;'>Click here to log in</a></p>
+                        <p><a href='https://yourdomain.com/login.php' style='background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Click here to log in</a></p>
                         <p>Best regards,<br>Zamboanga Tourist Platform</p>
                     ";
                     
@@ -391,17 +391,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         
         <label for="phone_number">Phone Number</label>
             <input type="text" name="phone_number" id="phone_number" maxlength="10" inputmode="numeric" pattern="[0-9]*" value = "<?= $guide["phone_number"] ?? "" ?>">
-            <p style="color: red;"> <?= $errors["phone_number"] ?? "" ?> </p>
+            <p style="color: red; font-weight: bold;"> <?= $errors["phone_number"] ?? "" ?> </p>
             
         <br><br>
         <h3>Emergency Info</h3>
             <label for="emergency_name"> Emergency Name </label>
                 <input type="text" name="emergency_name" id="emergency_name" value ="<?= $guide["emergency_name"] ?? "" ?>" >
-                <p style="color: red;"> <?= $errors["emergency_name"] ?? "" ?> </p>
+                <p style="color: red; font-weight: bold;"> <?= $errors["emergency_name"] ?? "" ?> </p>
 
         <label for="emergency_relationship"> Emergency Relationship </label>
             <input type="text" name="emergency_relationship" id="emergency_relationship" value = "<?= $guide["emergency_relationship"] ?? "" ?>">
-            <p style="color: red;"> <?= $errors["emergency_relationship"] ?? "" ?> </p>
+            <p style="color: red; font-weight: bold;"> <?= $errors["emergency_relationship"] ?? "" ?> </p>
 
         
         <label for="emergency_country_ID"> Country Code </label>
@@ -419,7 +419,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <label for="emergency_phonenumber">Phone Number</label>
         <input type="text" name="emergency_phonenumber" id="emergency_phonenumber" maxlength="10" inputmode="numeric" pattern="[0-9]*" value = "<?= $guide["emergency_phonenumber"] ?? "" ?>">
-        <p style="color: red;"> <?= $errors["emergency_phonenumber"] ?? "" ?> </p>
+        <p style="color: red; font-weight: bold;"> <?= $errors["emergency_phonenumber"] ?? "" ?> </p>
 
 
         <h3>Address</h3>
@@ -443,7 +443,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <p class="error"><?= $errors["address_country_ID"] ?? "" ?></p>
 
         <!-- Region Field - Dropdown for PH, Text Input for others -->
-        <div id="region_dropdown_container" style="display: no">
+        <div id="region_dropdown_container" style="display: none;">
             <label for="region_ID"> Region </label>
             <select name="region_ID" id="region_ID" onchange="loadProvinces(this.value)" disabled>
                 <option value="">--SELECT REGION--</option>
@@ -460,14 +460,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </select>
             <p class="error"><?= $errors["region_ID"] ?? "" ?></p>
         </div>
-        <div id="region_text_container" style="display: no">
+        <div id="region_text_container" style="display: none;">
             <label for="region_name"> Region </label>
             <input type="text" name="region_name" id="region_name" value="<?= $guide["region_name"] ?? "" ?>" disabled>
             <p class="error"><?= $errors["region_name"] ?? "" ?></p>
         </div>
 
         <!-- Province Field - Dropdown for PH, Text Input for others -->
-        <div id="province_dropdown_container" style="display: no">
+        <div id="province_dropdown_container" style="display: none;">
             <label for="province_ID"> Province </label>
             <select name="province_ID" id="province_ID" onchange="loadCities(this.value)" disabled>
                 <option value="">--SELECT PROVINCE--</option>
@@ -485,14 +485,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </select>
             <p class="error"><?= $errors["province_ID"] ?? "" ?></p>
         </div>
-        <div id="province_text_container" style="display: no">
+        <div id="province_text_container" style="display: none;">
             <label for="province_name"> Province </label>
             <input type="text" name="province_name" id="province_name" value="<?= $guide["province_name"] ?? "" ?>" disabled>
             <p class="error"><?= $errors["province_name"] ?? "" ?></p>
         </div>
 
         <!-- City Field - Dropdown for PH, Text Input for others -->
-        <div id="city_dropdown_container" style="display: no">
+        <div id="city_dropdown_container" style="display: none;">
             <label for="city_ID"> City/Municipality </label>
             <select name="city_ID" id="city_ID" onchange="loadBarangays(this.value)" disabled>
                 <option value="">--SELECT CITY--</option>
@@ -510,14 +510,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </select>
             <p class="error"><?= $errors["city_ID"] ?? "" ?></p>
         </div>
-        <div id="city_text_container" style="display: no">
+        <div id="city_text_container" style="display: none;">
             <label for="city_name"> City/Municipality </label>
             <input type="text" name="city_name" id="city_name" value="<?= $guide["city_name"] ?? "" ?>" disabled>
             <p class="error"><?= $errors["city_name"] ?? "" ?></p>
         </div>
 
         <!-- Barangay Field - Dropdown for PH, Text Input for others -->
-        <div id="barangay_dropdown_container" style="display: no">
+        <div id="barangay_dropdown_container" style="display: none;">
             <label for="barangay_ID"> Barangay </label>
             <select name="barangay_ID" id="barangay_ID" disabled>
                 <option value="">--SELECT BARANGAY--</option>
@@ -535,7 +535,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </select>
             <p class="error"><?= $errors["barangay_ID"] ?? "" ?></p>
         </div>
-        <div id="barangay_text_container" style="display: no">
+        <div id="barangay_text_container" style="display: none;">
             <label for="barangay_name"> Barangay </label>
             <input type="text" name="barangay_name" id="barangay_name" value="<?= $guide["barangay_name"] ?? "" ?>" disabled>
             <p class="error"><?= $errors["barangay_name"] ?? "" ?></p>

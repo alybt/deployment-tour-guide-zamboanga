@@ -15,13 +15,7 @@ class Booking extends Database{
         $this->activity = new ActivityLogs(); 
     }
 
-    public function getAllCompanionCategories(){
-        $sql = "SELECT * FROM `companion_category`";
-        $db = $this->connect();
-        $query = $db->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
+   
 
     public function viewBookingByTourist($tourist_ID){
         $sql = "SELECT 
@@ -30,34 +24,29 @@ class Booking extends Database{
             tp.tourpackage_ID,
             tp.tourpackage_name,
             tp.tourpackage_desc,
-            CONCAT(n.name_first, ' ', n.name_last) AS guide_name,
+            CONCAT(ul.name_first, ' ', ul.name_last) AS guide_name,
             b.booking_start_date,
             b.booking_end_date,
             b.booking_status,
-            s.schedule_days,
-            np.numberofpeople_maximum,
-            np.numberofpeople_based,
-            pc.pricing_foradult,
-            pc.pricing_forchild,
-            pc.pricing_foryoungadult,
-            pc.pricing_forsenior,
-            pc.pricing_forpwd,
-            pc.include_meal,
-            pc.pricing_mealfee,
-            pc.transport_fee,
-            pc.pricing_discount,
+            tp.schedule_days,
+            tp.numberofpeople_maximum,
+            tp.numberofpeople_based,
+            tp.pricing_foradult,
+            tp.pricing_forchild,
+            tp.pricing_foryoungadult,
+            tp.pricing_forsenior,
+            tp.pricing_forpwd,
+            tp.include_meal,
+            tp.pricing_mealfee,
+            tp.transport_fee,
+            tp.pricing_discount,
             GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots
         FROM booking b
         JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
-        JOIN schedule s ON tp.schedule_ID = s.schedule_ID
-        JOIN Number_Of_People np ON np.numberofpeople_ID = s.numberofpeople_ID
-        JOIN pricing pc ON pc.pricing_ID = np.pricing_ID
         JOIN guide g ON tp.guide_ID = g.guide_ID
         JOIN account_info ai ON g.account_ID = ai.account_ID
-        JOIN user_login ul ON ai.user_ID = ul.user_ID
-        JOIN person p ON ul.person_ID = p.person_ID
-        JOIN name_info n ON p.name_ID = n.name_ID
-        JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
+        JOIN User_Login ul ON ai.user_ID = ul.user_ID  
+        JOIN tour_package_spots tps ON tp.tourpackage_ID = tp.tourpackage_ID
         JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID    
         WHERE b.tourist_ID = :tourist_ID
         GROUP BY b.booking_ID
@@ -78,34 +67,29 @@ class Booking extends Database{
             tp.tourpackage_ID,
             tp.tourpackage_name,
             tp.tourpackage_desc,
-            CONCAT(n.name_first, ' ', n.name_last) AS guide_name,
+            CONCAT(ul.name_first, ' ', ul.name_last) AS guide_name,
             b.booking_start_date,
             b.booking_end_date,
             b.booking_status,
-            s.schedule_days,
-            np.numberofpeople_maximum,
-            np.numberofpeople_based,
-            pc.pricing_foradult,
-            pc.pricing_forchild,
-            pc.pricing_foryoungadult,
-            pc.pricing_forsenior,
-            pc.pricing_forpwd,
-            pc.include_meal,
-            pc.pricing_mealfee,
-            pc.transport_fee,
-            pc.pricing_discount,
+            tp.schedule_days,
+            tp.numberofpeople_maximum,
+            tp.numberofpeople_based,
+            tp.pricing_foradult,
+            tp.pricing_forchild,
+            tp.pricing_foryoungadult,
+            tp.pricing_forsenior,
+            tp.pricing_forpwd,
+            tp.include_meal,
+            tp.pricing_mealfee,
+            tp.transport_fee,
+            tp.pricing_discount,
             GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots
         FROM booking b
         JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
-        JOIN schedule s ON tp.schedule_ID = s.schedule_ID
-        JOIN Number_Of_People np ON np.numberofpeople_ID = s.numberofpeople_ID
-        JOIN pricing pc ON pc.pricing_ID = np.pricing_ID
         JOIN guide g ON tp.guide_ID = g.guide_ID
         JOIN account_info ai ON g.account_ID = ai.account_ID
-        JOIN user_login ul ON ai.user_ID = ul.user_ID
-        JOIN person p ON ul.person_ID = p.person_ID
-        JOIN name_info n ON p.name_ID = n.name_ID
-        JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
+        JOIN User_Login ul ON ai.user_ID = ul.user_ID
+        JOIN tour_package_spots tps ON tp.tourpackage_ID = tp.tourpackage_ID
         JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID    
         LEFT JOIN booking_bundle bb ON b.booking_ID = bb.booking_ID
         WHERE b.booking_ID = :booking_ID
@@ -126,33 +110,28 @@ class Booking extends Database{
             tp.tourpackage_ID,
             tp.tourpackage_name,
             tp.tourpackage_desc,
-            CONCAT(n.name_first, ' ', n.name_last) AS tourist_name,
+            CONCAT(ul.name_first, ' ', ul.name_last) AS tourist_name,
             b.booking_start_date,
             b.booking_end_date,
             b.booking_status,
-            s.schedule_days,
-            np.numberofpeople_maximum,
-            np.numberofpeople_based,
-            pc.pricing_foradult,
-            pc.pricing_forchild,
-            pc.pricing_foryoungadult,
-            pc.pricing_forsenior,
-            pc.pricing_forpwd,
-            pc.include_meal,
-            pc.pricing_mealfee,
-            pc.transport_fee,
-            pc.pricing_discount,
+            tp.schedule_days,
+            tp.numberofpeople_maximum,
+            tp.numberofpeople_based,
+            tp.pricing_foradult,
+            tp.pricing_forchild,
+            tp.pricing_foryoungadult,
+            tp.pricing_forsenior,
+            tp.pricing_forpwd,
+            tp.include_meal,
+            tp.pricing_mealfee,
+            tp.transport_fee,
+            tp.pricing_discount,
             GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots
         FROM booking b
         JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
-        JOIN schedule s ON tp.schedule_ID = s.schedule_ID
-        JOIN Number_Of_People np ON np.numberofpeople_ID = s.numberofpeople_ID
-        JOIN pricing pc ON pc.pricing_ID = np.pricing_ID
         JOIN account_info ai ON ai.account_ID = b.tourist_ID
-        JOIN user_login ul ON ai.user_ID = ul.user_ID
-        JOIN person p ON ul.person_ID = p.person_ID
-        JOIN name_info n ON p.name_ID = n.name_ID
-        JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
+        JOIN User_Login ul ON ai.user_ID = ul.user_ID
+        JOIN tour_package_spots tps ON tp.tourpackage_ID = tp.tourpackage_ID
         JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID    
         LEFT JOIN booking_bundle bb ON b.booking_ID = bb.booking_ID
         WHERE b.booking_ID = :booking_ID
@@ -292,18 +271,15 @@ class Booking extends Database{
 
     public function getBookingByGuideID($guide_ID){
         $sql = "SELECT
-            tp.tourpackage_name, tp.tourpackage_desc, s.schedule_days, 
-            CONCAT(ni.name_first, ' ', ni.name_last) AS tourist_name, 
+            tp.tourpackage_name, tp.tourpackage_desc, tp.schedule_days, 
+            CONCAT(ul.name_first, ' ', ul.name_last) AS tourist_name, 
             b.booking_ID, b.booking_start_date, b.booking_end_date, b.booking_status, 
-            s.schedule_days, GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots 
+            tp.schedule_days, GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots 
             FROM booking b 
             JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID 
             JOIN account_info ai ON b.tourist_ID = ai.account_ID 
-            JOIN user_login ul ON ai.user_ID = ul.user_ID 
-            JOIN person p ON ul.person_ID = p.person_ID 
-            JOIN name_info ni ON p.name_ID = ni.name_ID 
-            JOIN schedule s ON s.schedule_ID = tp.schedule_ID 
-            JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID 
+            JOIN user_login ul ON ai.user_ID = ul.user_ID  
+            JOIN tour_package_spots tps ON tp.tourpackage_ID = tp.tourpackage_ID 
             JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID
             WHERE tp.guide_ID = :guide_ID
             GROUP BY b.booking_ID
@@ -312,6 +288,41 @@ class Booking extends Database{
         $query = $db->prepare($sql);
         $query->bindParam(":guide_ID", $guide_ID);
         
+        $result = $query->execute();
+
+        if($result){
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
+    }
+
+    public function getAllBookings(){
+        $db = $this->connect();
+        $sql = "SELECT
+            tp.tourpackage_name, tp.tourpackage_desc, tp.schedule_days, 
+            CONCAT(ul.name_first, ' ', ul.name_last) AS tourist_name, 
+            b.booking_ID, b.booking_start_date, b.booking_end_date, b.booking_status, 
+            tp.schedule_days, GROUP_CONCAT(ts.spots_name SEPARATOR ', ') AS tour_spots,
+            CONCAT(ul_g.name_first, ' ', ul_g.name_last) AS guide_name,
+            b.booking_created_at AS booking_date,
+            b.booking_start_date AS tour_date,
+            pt.transaction_total_amount AS total_amount,
+            pt.transaction_status AS payment_status,
+            b.booking_status
+            FROM booking b 
+            JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID 
+            JOIN account_info ai ON b.tourist_ID = ai.account_ID 
+            JOIN user_login ul ON ai.user_ID = ul.user_ID  
+            JOIN Guide g ON tp.guide_ID = g.guide_ID
+            JOIN account_info ai_g ON g.account_ID = ai_g.account_ID
+            JOIN user_login ul_g ON ai_g.user_ID = ul_g.user_ID
+            JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID 
+            JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID
+            JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID 
+            GROUP BY b.booking_ID
+            ORDER BY ABS(DATEDIFF(b.booking_start_date, CURRENT_TIMESTAMP)) ASC";
+        $query = $db->prepare($sql);
         $result = $query->execute();
 
         if($result){
@@ -350,20 +361,19 @@ class Booking extends Database{
 
             if (!$stmt->execute()) {
                 $db->rollback();
-                throw new Exception("Failed to update Booking status.");
+                throw new Exception("Failed to update Booking statutp.");
                 return false;
             }
 
             $sql = "UPDATE Payment_Transaction pt
-                    JOIN Payment_Info pi ON pt.paymentinfo_ID = pi.paymentinfo_ID
                     SET pt.transaction_status = 'No Refund'
-                    WHERE pi.booking_ID = :booking_ID;";
+                    WHERE pt.booking_ID = :booking_ID";
             $query = $db->prepare($sql);
             $query->bindParam(':booking_ID', $booking_ID);
 
             if (!$query->execute()) {
                 $db->rollback();
-                throw new Exception("Failed to update Transaction status.");
+                throw new Exception("Failed to update Transaction statutp.");
                 return false;
             } 
 
@@ -401,11 +411,10 @@ class Booking extends Database{
     public function getCompanions($booking_ID){
         $sql = "SELECT 
                 C.companion_name,
-                CC.companion_category_name
+                C.companion_category
             FROM Booking AS B
             JOIN Booking_Bundle AS BB ON B.booking_ID = BB.booking_ID
             JOIN Companion AS C ON BB.companion_ID = C.companion_ID
-            JOIN Companion_Category CC ON CC.companion_category_ID = C.companion_category_ID
             WHERE B.booking_ID = :booking_ID
             ORDER BY C.companion_ID";
         $db = $this->connect();

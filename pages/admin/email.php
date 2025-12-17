@@ -86,12 +86,12 @@ try {
     $mail->isHTML(true); // Set email format to HTML
     $mail->Subject = 'New Account Notification (Sandbox Test ' . date('H:i:s') . ')';
     $mail->Body    = '
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-            <div style="padding: 20px; border: 1px solid #ddd;">
-                <h2 style="color: #3b82">Your Notification Test is Complete!</h2>
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+                <h2 style="color: #3b82f6;">Your Notification Test is Complete!</h2>
                 <p>This is a test email sent using PHPMailer and intercepted by your Mailtrap sandbox configuration.</p>
                 <p><strong>Next Step:</strong> Log into your Mailtrap dashboard and check the inbox associated with the API key you are using. You should see this message appear immediately!</p>
-                <p style="margin-top: 2">Best,<br>The PHP Developer</p>
+                <p style="margin-top: 20px;">Best,<br>The PHP Developer</p>
             </div>
         </div>';
     $mail->AltBody = 'Your Notification Test is Complete! This is a test email sent using PHPMailer and captured by your Mailtrap sandbox.';

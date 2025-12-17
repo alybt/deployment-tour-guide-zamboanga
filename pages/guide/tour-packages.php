@@ -25,7 +25,7 @@ $packages = $guideObj->viewPackageByGuideID($guide_ID);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Tour Packages | TourGuide PH</title>
+    <title>Tour Packages | Tourismo Zamboanga</title>
 
     <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css">
@@ -102,9 +102,7 @@ $packages = $guideObj->viewPackageByGuideID($guide_ID);
                     <tbody>
                         <?php if (!empty($packages)): ?>
                             <?php $no = 1; foreach ($packages as $package): 
-                                $schedule = $guideObj->getScheduleByID($package['schedule_ID']);
-                                $people = $guideObj->getPeopleByID($schedule['numberofpeople_ID']);
-                                $pricing = $guideObj->getPricingByID($people['pricing_ID']);
+                                 
                                 $spots = $guideObj->getSpotsByPackage($package['tourpackage_ID']);
                                 $spotNames = array_map(fn($spot) => $spot['spots_name'], $spots);
                             ?>
@@ -116,11 +114,11 @@ $packages = $guideObj->viewPackageByGuideID($guide_ID);
                                     <td class="text-truncate-200">
                                         <?= htmlspecialchars($package['tourpackage_desc']) ?>
                                     </td>
-                                    <td><?= htmlspecialchars($schedule['schedule_days']) ?></td>
-                                    <td><?= htmlspecialchars($people['numberofpeople_maximum']) ?></td>
-                                    <td><?= htmlspecialchars($people['numberofpeople_based']) ?></td>
-                                    <td>₱<?= number_format($pricing['pricing_foradult'], 2) ?></td>
-                                    <td><?= $pricing['pricing_discount'] ?>%</td>
+                                    <td><?= htmlspecialchars($package['schedule_days']) ?></td>
+                                    <td><?= htmlspecialchars($package['numberofpeople_maximum']) ?></td>
+                                    <td><?= htmlspecialchars($package['numberofpeople_based']) ?></td>
+                                    <td>₱<?= number_format($package['pricing_foradult'], 2) ?></td>
+                                    <td><?= $package['pricing_discount'] ?>%</td>
                                     <td class="text-truncate-150">
                                         <?= !empty($spotNames) ? htmlspecialchars(implode(', ', $spotNames)) : '—' ?>
                                     </td>

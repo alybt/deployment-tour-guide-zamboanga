@@ -28,7 +28,7 @@
             </div>
             <p class="mb-2"><small><i class="fas fa-language"></i> <?= $guide['guide_languages'] ?></small></p>
             <div class="d-flex justify-content-between align-items-center">
-                <!-- <span class="fw-bold" style="color: var(--acc">$45/hr</span> -->
+                <!-- <span class="fw-bold" style="color: var(--accent);">$45/hr</span> -->
                 <a href="guide-profile.php?guide_id=<?= $guide['guide_ID'] ?>" class="text-decoration-none">
                     <button class="btn btn-primary btn-sm">View Profile</button>
                 </a>

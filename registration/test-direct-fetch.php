@@ -20,7 +20,7 @@ if ($cities && is_array($cities)) {
     }
     echo "</ul>";
 } else {
-    echo "<p style='color: r'>No cities returned!</p>";
+    echo "<p style='color: red;'>No cities returned!</p>";
 }
 
 echo "<h3>Test 2: What fetch-city.php returns</h3>";

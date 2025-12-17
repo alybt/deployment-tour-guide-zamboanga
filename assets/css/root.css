@@ -15,4 +15,7 @@
     --cancelled-no-refund: #BC2E2A;
     --refunded: #42325D;    
     --failed: #820000;
-    --rejected-by-guide: #B71
+    --rejected-by-guide: #B71C1C;
+    --booking-expired-payment-not-completed: #695985;
+    --booking-expired-guide-did-not-confirm-in-time: #695985;
+}

@@ -614,3 +614,122 @@ main {
     border-radius: 4px !important;
     margin: 1px 2px !important;
 }
+
+/* Optional: Show full title on hover (beautiful tooltip) */
+.fc-daygrid-event:hover {
+    z-index: 9999 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    background: rgba(33, 54, 56, 0.95) !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.fc-daygrid-event:hover .fc-event-title {
+    white-space: normal !important;
+    overflow: visible !important;
+    padding: 6px 10px !important;
+    border-radius: 6px;
+}
+
+/* Make sure the event container doesn't grow too tall */
+.fc-daygrid-day-frame {
+    overflow: hidden !important;
+}
+
+/* Optional: Limit how many events show per day (recommended) */
+.fc-daygrid-day-events {
+    max-height: 100px !important;   /* Adjust if you want more/less */
+    overflow: hidden !important;
+}
+
+/* Show "+X more" when too many events */
+.fc-daygrid-day-bottom {
+    font-size: 0.7rem !important;
+    color: var(--accent) !important;
+    cursor: pointer;
+}
+
+/* Remove hard-coded tall height to prevent overflow */
+/* .calendar-container height intentionally left auto */
+
+/* Right column: match calendar height and allow internal scrolling */
+.active-bookings {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#booking-list-container {
+    flex: 1 1 auto;
+    min-height: 0; /* enable flex child scrolling */
+    overflow-y: auto;
+}
+
+/* Ensure both columns stretch equally to the tallest content */
+.booking-grid > * > .calendar-container,
+.booking-grid > .active-bookings {
+    height: 100%;
+}
+
+/* Booking Status Badge Colors */
+.badge.bg-pending-for-payment {
+    background-color: var(--pending-for-payment) !important;
+    color: #000 !important;
+}
+
+.badge.bg-pending-for-approval {
+    background-color: var(--pending-for-approval) !important;
+    color: #fff !important;
+}
+
+.badge.bg-approved {
+    background-color: var(--approved) !important;
+    color: #fff !important;
+}
+
+.badge.bg-in-progress {
+    background-color: var(--in-progress) !important;
+    color: #fff !important;
+}
+
+.badge.bg-completed {
+    background-color: var(--completed) !important;
+    color: #fff !important;
+}
+
+.badge.bg-cancelled {
+    background-color: var(--cancelled) !important;
+    color: #fff !important;
+}
+
+.badge.bg-cancelled-no-refund {
+    background-color: var(--cancelled-no-refund) !important;
+    color: #fff !important;
+}
+
+.badge.bg-refunded {
+    background-color: var(--refunded) !important;
+    color: #fff !important;
+}
+
+.badge.bg-failed {
+    background-color: var(--failed) !important;
+    color: #fff !important;
+}
+
+.badge.bg-rejected-by-guide {
+    background-color: var(--rejected-by-guide) !important;
+    color: #fff !important;
+}
+
+.badge.bg-booking-expired-payment-not-completed {
+    background-color: var(--booking-expired-payment-not-completed) !important;
+    color: #fff !important;
+}
+
+.badge.bg-booking-expired-guide-did-not-confirm-in-time {
+    background-color: var(--booking-expired-guide-did-not-confirm-in-time) !important;
+    color: #fff !important;
+}

@@ -43,3 +43,19 @@
     transition: height 0.3s ease, opacity 0.3s ease;
     overflow: hidden;
     }
+
+    header .collapse:not(.show) {
+    display: block;         /* ensures height can animate */
+    height: 0;              /* start closed */
+    opacity: 0;
+    }
+
+    header .collapse.show {
+    height: auto;           /* open naturally */
+    opacity: 1;
+    }
+}
+
+
+
+

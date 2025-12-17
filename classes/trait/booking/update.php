@@ -12,6 +12,7 @@ trait UpdateBookings{
         try {
             $db = $this->connect(); 
 
+            // SELECT OLD STATUSES BEFORE UPDATE 
             $sqlSelectBefore = " SELECT booking_ID, booking_status
                 FROM booking
                 WHERE booking_status IN ('Pending for Payment', 'Pending for Approval', 'Approved', 'In Progress' )

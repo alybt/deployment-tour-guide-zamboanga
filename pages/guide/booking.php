@@ -86,7 +86,7 @@ if (!empty($bookings)) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Bookings | TourGuide PH</title>
+    <title>Bookings | Tourismo Zamboanga</title>
 
     <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -155,7 +155,7 @@ if (!empty($bookings)) {
                 <div class="stat-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #E5A13E, #f39c12);">
                                 <i class="bi bi-calendar-week"></i>
                             </div>
                             <div>
@@ -171,12 +171,12 @@ if (!empty($bookings)) {
                 <div class="stat-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #213638">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #213638, #2e8b57);">
                                 <i class="bi bi-calendar-month"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0 text-muted">This Month</h6>
-                                <h4 class="mb-1 fw-bold" style="color: var(--secondary-c"><?= $statsThisMonth ?></h4>
+                                <h4 class="mb-1 fw-bold" style="color: var(--secondary-color);"><?= $statsThisMonth ?></h4>
                                 <small class="text-muted">₱ <?= number_format($earningsThisMonth, 2) ?></small>
                             </div>
                         </div>
@@ -187,12 +187,12 @@ if (!empty($bookings)) {
                 <div class="stat-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #CFE7E5">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #CFE7E5, #a8e6cf);">
                                 <i class="bi bi-calendar-year"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0 text-muted">This Year</h6>
-                                <h4 class="mb-1 fw-bold" style="color: #27ae"><?= $statsThisYear ?></h4>
+                                <h4 class="mb-1 fw-bold" style="color: #27ae60;"><?= $statsThisYear ?></h4>
                                 <small class="text-muted">₱ <?= number_format($earningsThisYear, 2) ?></small>
                             </div>
                         </div>
@@ -202,11 +202,11 @@ if (!empty($bookings)) {
         </div>
 
         <!-- Calendar Section -->
-        <div class="card mb-4" style="border: 1px solid #e">
-            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
+        <div class="card mb-4" style="border: 1px solid #e9ecef;">
+            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e9ecef; padding: 1.5rem;">
                 <h5 class="mb-0 fw-bold">Booking Calendar</h5>
             </div>
-            <div class="card-body" style="padding: 1.5">
+            <div class="card-body" style="padding: 1.5rem;">
                 <div id="calendar"></div>
             </div>
         </div>
@@ -240,7 +240,7 @@ if (!empty($bookings)) {
                                 <tr>
                                     <td><?= $no++ ?></td>
                                     <td><strong><?= htmlspecialchars($booking['tourpackage_name']) ?></strong></td>
-                                    <td class="text-truncate" style="max-width: 18">
+                                    <td class="text-truncate" style="max-width: 180px;">
                                         <?= htmlspecialchars($booking['tourpackage_desc']) ?>
                                     </td>
                                     <td><?= htmlspecialchars($booking['schedule_days']) ?> days</td>
@@ -260,7 +260,7 @@ if (!empty($bookings)) {
                                             <?= htmlspecialchars($status) ?>
                                         </span>
                                     </td>
-                                    <td class="text-truncate" style="max-width: 12">
+                                    <td class="text-truncate" style="max-width: 120px;">
                                         <?= htmlspecialchars($booking['tour_spots'] ?? '—') ?>
                                     </td>
                                     <td>

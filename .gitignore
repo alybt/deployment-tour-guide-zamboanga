@@ -4,6 +4,7 @@ paymongo.env
 email.env
 .env
 
+
 # Logs
 *.log
 

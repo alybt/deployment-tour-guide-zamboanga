@@ -5,7 +5,7 @@
                                     <div class="col-md-8">
                                         <h5 class="mb-2">
                                             <a href="tour-packages-view.php?id=<?= $package['tourpackage_ID'] ?>" 
-                                               class="text-decoration-none" style="color: var(--secondary-c">
+                                               class="text-decoration-none" style="color: var(--secondary-color);">
                                                 <?= htmlspecialchars($package['tourpackage_name']) ?>
                                             </a>
                                         </h5>
@@ -22,12 +22,12 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <h6 class="fw-bold mb-3" style="color: var(--accent);">
+                                        <h6 class="fw-bold mb-3" style="color: var(--accent); font-size: 1.2rem;">
                                             <?= $package['pricing_currency'] ?> <?= number_format($package['pricing_foradult'], 2) ?>
                                         </h6>
                                         <a href="tour-packages-view.php?id=<?= $package['tourpackage_ID'] ?>" 
-                                           class="btn btn-warning btn-sm" style="background: var(--accent); color: white;">
-                                            View & Book
+                                           class="btn btn-warning btn-sm" style="background: var(--accent); color: white; border: none;">
+                                            Book
                                         </a>
                                     </div>
                                 </div>

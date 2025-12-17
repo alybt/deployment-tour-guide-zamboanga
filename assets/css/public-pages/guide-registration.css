@@ -130,3 +130,45 @@ button:active {
   font-size: 0.85rem;
   margin-top: 5px;
 }
+
+.success {
+  background-color: var(--success-color);
+  color: var(--white);
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+/* ===== Section Container ===== */
+div.section-header {
+  background: var(--light-bg);
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.test-registration {
+    background: #f8f9fa; 
+    width: 50rem;
+    padding: 15px; 
+    margin-bottom: 20px; 
+    border-radius: 5px;
+    justify-self: center;
+}
+
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  form {
+    padding: 25px 20px;
+  }
+
+  h2, h3 {
+    font-size: 1.1rem;
+  }
+}
+
+.title h2{
+  color: var(--white) !important;
+}

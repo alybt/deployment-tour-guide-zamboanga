@@ -8,21 +8,77 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'Tourist') {
 require_once "../../classes/guide.php";
 require_once "../../classes/tour-manager.php";
 require_once "../../classes/tourist.php";
+require_once "../../classes/conversation.php";
+
 
 $guideObj = new Guide();
+$conversationObj = new Conversation();
 
+// Get all conversations first
+$db = $conversationObj->connect();
+$tourist_ID = $_SESSION['user']['account_ID']; 
+$conversationList = $conversationObj->fetchConversations($tourist_ID);
+
+// If no guide_ID, use the first conversation
 if (!isset($_GET['guide_id']) || empty($_GET['guide_id'])) {
-    $_SESSION['error'] = "Invalid guide ID.";
+    if (!empty($conversationList)) {
+        $guide_ID = $conversationList[0]['other_user_ID'];
+        // Redirect to this guide's conversation
+        header("Location: inbox.php?guide_id=" . $guide_ID);
+        exit();
+    } else {
+        $_SESSION['error'] = "No conversations yet.";
+        header("Location: index.php");
+        exit();
+    }
+}
+
+$guide_account_ID = intval($_GET['guide_id']); // This is an account_ID
+
+// Get or create conversation with this specific guide
+$db = $conversationObj->connect();
+$selected_conversation_ID = $conversationObj->addgetUsers($tourist_ID, $guide_account_ID, $db);
+
+if (!$selected_conversation_ID) {
+    $_SESSION['error'] = "Unable to load conversation.";
     header("Location: index.php");
     exit();
 }
 
+// Fetch messages for the selected conversation
+$messages = $conversationObj->fetchMessages($selected_conversation_ID);
 
-$guide_ID = intval($_GET['guide_id']);
-$tourist_ID = $_SESSION['account_ID'];
+// Mark messages as read for this conversation
+$conversationObj->markAsRead($selected_conversation_ID, $tourist_ID);
 
-$guidedetails = $guideObj->getGuideByID($guide_ID);
+// Resolve guide_ID from account_ID, then fetch details for header
+$guide_ID = $guideObj->getGuide_ID($guide_account_ID);
+$guidedetails = $guide_ID ? $guideObj->getGuideByID($guide_ID) : null;
+ 
 
+
+$guide_name = $guidedetails['guide_name'] ?? '';
+$guide_avatar = $guidedetails['profile_pic'] ?? ('https://i.pravatar.cc/100?img=' . $guide_account_ID);
+
+if ($guide_name === '') {
+    $stmt = $db->prepare("
+        SELECT TRIM(CONCAT(
+            ul.name_first, ' ',
+            COALESCE(ul.name_second, ''), ' ',
+            COALESCE(ul.name_middle, ''), ' ',
+            ul.name_last,
+            IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
+        )) AS full_name
+        FROM Account_Info ai
+        JOIN User_Login ul ON ai.user_ID = ul.user_ID
+        WHERE ai.account_ID = :account_ID
+        LIMIT 1
+    ");
+    $stmt->bindParam(':account_ID', $guide_account_ID, PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $guide_name = $row['full_name'] ?? 'Unknown Guide';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +88,12 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
     <title>Messages - Tourismo Zamboanga</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+
+    
+    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<style>
         :root {
             --primary-color: #ffffff;
             --secondary-color: #213638;
@@ -47,6 +108,7 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
             padding: 0;
             height: 100vh;
             overflow: hidden;
+            margin-top: 4rem;
         }
 
         
@@ -542,7 +604,39 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
                 transform: translateY(-10px);
             }
         }
-    </style>
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(229, 161, 62, 0.3);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }</style>
 </head>
 <body>
     <?php include 'includes/header.php'?>
@@ -557,79 +651,7 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
                 </div>
             </div>
             <div class="conversations-list">
-                <div class="conversation-item active unread" data-chat="1">
-                    <div class="conversation-avatar">
-                        <img src="https://i.pravatar.cc/100?img=33" alt="Marco Rossi">
-                        <div class="online-indicator"></div>
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">Marco Rossi</span>
-                            <span class="conversation-time">10:30 AM</span>
-                        </div>
-                        <p class="conversation-preview">Perfect! See you tomorrow at 9 AM sharp. Have a wonderful evening!</p>
-                    </div>
-                    <div class="unread-badge">2</div>
-                </div>
-
-                <!-- Conversation 2 -->
-                <div class="conversation-item" data-chat="2">
-                    <div class="conversation-avatar">
-                        <img src="https://i.pravatar.cc/100?img=45" alt="Sofia Bianchi">
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">Sofia Bianchi</span>
-                            <span class="conversation-time">Yesterday</span>
-                        </div>
-                        <p class="conversation-preview">Great tour! Thank you so much for showing us around</p>
-                    </div>
-                </div>
-
-                <!-- Conversation 3 - Unread -->
-                <div class="conversation-item unread" data-chat="3">
-                    <div class="conversation-avatar">
-                        <img src="https://i.pravatar.cc/100?img=68" alt="Luca Romano">
-                        <div class="online-indicator"></div>
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">Luca Romano</span>
-                            <span class="conversation-time">2 days ago</span>
-                        </div>
-                        <p class="conversation-preview">I've confirmed your booking for December 18th. Looking forward to it!</p>
-                    </div>
-                    <div class="unread-badge">1</div>
-                </div>
-
-                <!-- Conversation 4 -->
-                <div class="conversation-item" data-chat="4">
-                    <div class="conversation-avatar">
-                        <img src="https://i.pravatar.cc/100?img=31" alt="Alessandro Conti">
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">Alessandro Conti</span>
-                            <span class="conversation-time">3 days ago</span>
-                        </div>
-                        <p class="conversation-preview">The Trastevere evening walk was amazing! Thanks again</p>
-                    </div>
-                </div>
-
-                <!-- Conversation 5 -->
-                <div class="conversation-item" data-chat="5">
-                    <div class="conversation-avatar">
-                        <img src="https://i.pravatar.cc/100?img=47" alt="Giulia Ferrari">
-                        <div class="online-indicator"></div>
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">Giulia Ferrari</span>
-                            <span class="conversation-time">1 week ago</span>
-                        </div>
-                        <p class="conversation-preview">Hi! I'd love to book a photography tour with you</p>
-                    </div>
-                </div>
+                <?php include 'includes/components/conversation-list.php'?>
             </div>
         </div>
 
@@ -638,104 +660,25 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
             <div class="chat-header">
                 <div class="chat-header-info">
                     <div class="chat-header-avatar">
-                        <img src="https://i.pravatar.cc/100?img=33" alt="Marco Rossi">
+                        <img src="<?= htmlspecialchars($guide_avatar) ?>" alt="<?= htmlspecialchars($guide_name) ?>">
                     </div>
                     <div class="chat-header-details">
-                        <h5>Marco Rossi</h5>
+                        <h5><?= htmlspecialchars($guide_name) ?></h5>
                         <div class="chat-header-status">
                             <i class="fas fa-circle"></i> Online
                         </div>
                     </div>
                 </div>
                 <div class="chat-header-actions">
-                    <button title="Video Call"><i class="fas fa-video"></i></button>
-                    <button title="Phone Call"><i class="fas fa-phone"></i></button>
-                    <button title="Booking Details"><i class="fas fa-info-circle"></i></button>
-                    <button title="More Options"><i class="fas fa-ellipsis-v"></i></button>
+                     
                 </div>
             </div>
 
             <div class="chat-messages" id="chatMessages">
-                <div class="date-divider">
-                    <span>December 11, 2025</span>
-                </div>
-
-                <div class="message">
-                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Hello Sarah! Thanks for booking the Ancient Rome tour. I'm excited to show you around!
-                        </div>
-                        <div class="message-time">9:00 AM</div>
-                    </div>
-                </div>
-
-                <div class="message sent">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Hi Marco! We're really looking forward to it. Can you confirm the meeting point?
-                        </div>
-                        <div class="message-time">9:15 AM</div>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Absolutely! We'll meet at the main entrance of the Colosseum at 9:00 AM tomorrow. I'll be wearing a red cap with "Tourismo Zamboanga" logo.
-                        </div>
-                        <div class="message-time">9:20 AM</div>
-                    </div>
-                </div>
-
-                <div class="message sent">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Perfect! Should we bring anything specific?
-                        </div>
-                        <div class="message-time">9:25 AM</div>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Just comfortable walking shoes, water, and your valid ID for the Colosseum entry. I'll handle everything else including skip-the-line tickets! 😊
-                        </div>
-                        <div class="message-time">9:30 AM</div>
-                    </div>
-                </div>
-
-                <div class="message sent">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Awesome! We're really excited about the gladiator stories you mentioned. See you tomorrow! 🏛️
-                        </div>
-                        <div class="message-time">10:00 AM</div>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            I have some great stories prepared! See you tomorrow at 9 AM sharp. Have a wonderful evening!
-                        </div>
-                        <div class="message-time">10:30 AM</div>
-                    </div>
-                </div>
-
-                <!-- Typing Indicator (hidden by default) -->
-                <div class="message" id="typingIndicator" style="display: no">
-                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
+                <?php 
+                $currentUserID = $tourist_ID; 
+                include 'includes/components/messages.php';
+                ?>
             </div>
 
             <div class="chat-input">
@@ -755,81 +698,103 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        const selectedGuideID = <?= json_encode($guide_account_ID) ?>;
+        const selectedConversationID = <?= json_encode($selected_conversation_ID) ?>;
+        const currentUserID = <?= json_encode($tourist_ID) ?>;
+
         $(document).ready(function() {
-                        function scrollToBottom() {
+            function scrollToBottom() {
                 const chatMessages = $('#chatMessages');
                 chatMessages.scrollTop(chatMessages[0].scrollHeight);
             }
 
             scrollToBottom();
 
-                        function sendMessage() {
+            function sendMessage() {
                 const input = $('#messageInput');
                 const message = input.val().trim();
                 
-                if (message) {
-                    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                    
-                    const messageHtml = `
-                        <div class="message sent">
-                            <div class="message-content">
-                                <div class="message-bubble">
-                                    ${message}
-                                </div>
-                                <div class="message-time">${time}</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    $('#typingIndicator').before(messageHtml);
-                    input.val('');
-                    scrollToBottom();
-                    
-                                        setTimeout(() => {
-                        $('#typingIndicator').show();
-                        scrollToBottom();
-                        
-                                                setTimeout(() => {
-                            $('#typingIndicator').hide();
-                            const responseTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                            
-                            const responseHtml = `
-                                <div class="message">
-                                    <img src="https://i.pravatar.cc/100?img=33" class="message-avatar" alt="Marco">
-                                    <div class="message-content">
-                                        <div class="message-bubble">
-                                            Thanks for your message! I'll get back to you shortly.
-                                        </div>
-                                        <div class="message-time">${responseTime}</div>
-                                    </div>
-                                </div>
-                            `;
-                            
-                            $('#typingIndicator').before(responseHtml);
-                            scrollToBottom();
-                        }, 2000);
-                    }, 500);
-                }
+                if (!message) return;
+
+                const sendBtn = $('#sendButton');
+                sendBtn.prop('disabled', true);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: './includes/ajax/send-message.php',
+                    data: {
+                        message: message,
+                        conversation_ID: selectedConversationID,
+                        guide_id: selectedGuideID
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) { 
+                            input.val('');
+                             
+                            reloadMessages();
+                        } else {
+                            console.error('Failed to send message:', response.error);
+                            alert('Failed to send message. Please try again.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                        console.log('Response:', xhr.responseText);
+                        alert('Error sending message. Please check your connection.');
+                    },
+                    complete: function() {
+                        sendBtn.prop('disabled', false);
+                        input.focus();
+                    }
+                });
             }
 
-                        $('#sendButton').on('click', sendMessage);
+            function reloadMessages() {
+                $('#chatMessages').html('<div class="loading-spinner"><div class="spinner"></div></div>');
+                
+                $.ajax({
+                    type: 'GET',
+                    url: './includes/ajax/get-messages.php',
+                    data: {
+                        conversation_ID: selectedConversationID
+                    },
+                    dataType: 'html',
+                    success: function(data) {
+                        $('#chatMessages').html(data).addClass('fade-in');
+                        scrollToBottom();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading messages:', error);
+                        $('#chatMessages').html('<div class="empty-chat"><p>Error loading messages</p></div>');
+                    }
+                });
+            }
 
-                        $('#messageInput').on('keypress', function(e) {
+            $('#sendButton').on('click', sendMessage);
+
+            $('#messageInput').on('keypress', function(e) {
                 if (e.which === 13) {
+                    e.preventDefault();
                     sendMessage();
                 }
             });
 
-                        $('.conversation-item').on('click', function() {
+            $('.conversation-item').on('click', function() {
+                const conversationID = $(this).data('chat');
+                const otherUserID = $(this).data('user-id') || $(this).find('.conversation-avatar img').attr('src').split('img=')[1];
+                
+                // Update active state
                 $('.conversation-item').removeClass('active');
                 $(this).addClass('active');
                 $(this).removeClass('unread');
                 $(this).find('.unread-badge').remove();
                 
-                                $('.chat-area').addClass('show-mobile');
+                // Load conversation
+                window.location.href = 'inbox.php?guide_id=' + otherUserID;
             });
 
-                        $('#searchConversations').on('keyup', function() {
+            $('#searchConversations').on('keyup', function() {
                 const searchText = $(this).val().toLowerCase();
                 
                 $('.conversation-item').each(function() {
@@ -844,22 +809,25 @@ $guidedetails = $guideObj->getGuideByID($guide_ID);
                 });
             });
 
-                        $('.attachment-btn').on('click', function() {
-                alert('File attachment feature - allows users to upload images or documents');
+            $('.attachment-btn').on('click', function() {
+                alert('File attachment feature - coming soon');
             });
 
-                        $('.chat-header-actions button').on('click', function() {
+            $('.chat-header-actions button').on('click', function() {
                 const icon = $(this).find('i').attr('class');
                 if (icon.includes('video')) {
-                    alert('Video call feature');
+                    alert('Video call feature - coming soon');
                 } else if (icon.includes('phone')) {
-                    alert('Voice call feature');
+                    alert('Voice call feature - coming soon');
                 } else if (icon.includes('info')) {
                     alert('View booking details');
                 } else {
                     alert('More options menu');
                 }
             });
+
+            // Auto-refresh messages every 3 seconds
+            setInterval(reloadMessages, 3000);
         });
     </script>
 </body>

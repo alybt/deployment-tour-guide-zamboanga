@@ -57,7 +57,7 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
     $methodcategory_ID = $_POST['methodcategory_ID'] ?? null;
-    $method_amount = $_POST['method_amount'] ?? 0;
+    $paymentinfo_total_amount = $_POST['paymentinfo_total_amount'] ?? 0;
     $method_currency = 'PHP';
     $method_cardnumber = $_POST['method_cardnumber'] ?? null;
     $method_expmonth = $_POST['method_expmonth'] ?? null;
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $method_status = $_POST['method_status'] ?? 'Pending';
  
     $methodcategory_processing_fee = (float)($_POST['methodcategory_processing_fee'] ?? 0);
-    $paymentinfo_total_amount = (float)$method_amount + $methodcategory_processing_fee;
+    $method_amount = (float)$paymentinfo_total_amount + $methodcategory_processing_fee;
  
     $method_ID = null;
  
@@ -166,7 +166,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- <link rel="stylesheet" href="../../assets/css/tourist/index.css"> -->
     <link rel="stylesheet" href="../../assets/css/tourist/header.css">
     <link rel="stylesheet" href="../../assets/css/tourist/header.css">
-    <style>
+<style> 
+    :root {
+        --primary-color: #ffffff;
+        --secondary-color: #213638;
+        --accent: #E5A13E;
+        --secondary-accent: #CFE7E5;
+        --muted-color: gainsboro;
+
+        /*Booking Status Color*/
+        --pending-for-payment: #F9A825 ;
+        --pending-for-approval: #EF6C00 ;
+        --approved: #3A8E5C;
+        --in-progress: #009688;
+        --completed: #1A6338;
+        --cancelled: #F44336;
+        --cancelled-no-refund: #BC2E2A;
+        --refunded: #42325D;    
+        --failed: #820000;
+        --rejected-by-guide: #B71C1C;
+        --booking-expired-payment-not-completed: #695985;
+        --booking-expired-guide-did-not-confirm-in-time: #695985;
+    }
+    body{
+        margin-top: 5rem;
+        background: var(--muted-color);
+    }
     .payment-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -190,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         color: #1a5d1a;
         margin-bottom: 20px;
         padding-bottom: 10px;
-        border-bottom: 3px solid #e0f2e0;
+        border-bottom: 3px solid var(--accent);
     }
 
     .booking-info-grid {
@@ -222,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     #feeBreakdown td {
         padding: 10px 12px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--accent);
     }
 
     #feeBreakdown .total-row {
@@ -274,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .form-group select {
         width: 100%;
         padding: 12px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--accent);
         border-radius: 8px;
         font-size: 1rem;
     }
@@ -332,10 +357,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- ERROR MESSAGES -->
     <?php if (!empty($errors)): ?>
-        <div style="grid-column: 1 / -1; background: #fee; border: 1px solid #fcc; border-radius: 8px;">
-            <h3 style="color: #c33;">⚠️ Payment Error</h3>
+        <div style="grid-column: 1 / -1; background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <h3 style="color: #c33; margin: 0 0 10px 0;">⚠️ Payment Error</h3>
             <?php foreach ($errors as $error): ?>
-                <p style="margin: 5px 0;"><?= htmlspecialchars($error) ?></p>
+                <p style="margin: 5px 0; color: #c33;"><?= htmlspecialchars($error) ?></p>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
@@ -359,40 +384,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <?php if ($totalNumberOfPeople > 0 && !empty($companions)): ?>
-        <h3 style="margin: 25px 0 10px;">Travel Companions</h3>
-        <ul style="margin: 0;">
+        <h3 style="margin: 25px 0 10px; color: #1a5d1a;">Travel Companions</h3>
+        <ul style="margin: 0; padding-left: 20px;">
             <?php foreach ($companions as $c): ?>
-                <li style="margin: 8px">
+                <li style="margin: 8px 0;">
                     <?= htmlspecialchars($c['companion_name']) ?> 
-                    <small style="color: #6">
-                        (<?= $c['companion_age'] ?> yrs • <?= $c['companion_category_name'] ?>)
+                    <small style="color: #666;">
+                        (<?= $c['companion_age'] ?> yrs • <?= $c['companion_category'] ?>)
                     </small>
                 </li>
             <?php endforeach; ?>
         </ul>
         <?php endif; ?>
 
-        <h3 class="section-title" style="margin-top: 3">Fee Breakdown</h3>
+        <h3 class="section-title" style="margin-top: 30px;">Fee Breakdown</h3>
         <table id="feeBreakdown">
             <thead>
                 <tr>
                     <th>Category</th>
-                    <th style="text-align: ri">Qty</th>
-                    <th style="text-align: ri">Amount</th>
+                    <th style="text-align: right;">Qty</th>
+                    <th style="text-align: right;">Amount</th>
                 </tr>
             </thead>
             <tbody id="feeBreakdownBody"></tbody>
             <tfoot>
                 <tr class="total-row">
-                    <td colspan="2"><strong>Grand Total (After Discount)</strong></td>
-                    <td style="text-align: right; font-size: 1.2rem;" id="grandTotal">₱0.00</td>
+                    <td colspan="2"><strong>Package Total Price (After Discount)</strong></td>
+                    <td style="text-align: right; font-size: 1.2rem; color: #1a5d1a;" id="grandTotal">₱0.00</td>
                 </tr>
             </tfoot>
         </table>
 
         <div class="highlight-box">
-            <strong>Total Amount to Pay:</strong> 
-            <span id="finalPayable" style="font-size: 1.4rem;">₱0.00</span>
+            <strong>Total Price:</strong> 
+            <span id="finalPayable" style="font-size: 1.4rem; color: #1a5d1a;">₱0.00</span>
         </div>
     </div>
 
@@ -426,8 +451,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label><strong>Total Amount to Pay</strong></label>
-                <input type="text" id="method_amount" readonly style="font-size: 1.4rem; font-weight: bold;">
-                <input type="hidden" name="method_amount" value="0">
+                <input type="text" id="paymentinfo_total_amount" readonly style="font-size: 1.4rem; font-weight: bold; color: #1a5d1a;">
+                <input type="hidden" name="paymentinfo_total_amount" value="0">
             </div>
 
             <div class="form-group">
@@ -442,8 +467,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label>Phone Number</label>
-                <div style="display: flex;">
-                    <select name="country_ID" id="country_ID" style="width: 4">
+                <div style="display: flex; gap: 10px;">
+                    <select name="country_ID" id="country_ID" style="width: 40%;">
                         <option value="">Code</option>
                         <?php foreach ($touristObj->fetchCountryCode() as $c): ?>
                             <option value="<?= $c['country_ID'] ?>" 
@@ -457,19 +482,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <fieldset class="address-section">
-                <legend>Billing Address</legend>
+            <!-- Billing Address Section (Consistent UI) -->
+            <h3 class="section-title" style="margin-top: 30px; font-size: 1.3rem;">Billing Address</h3>
+            <div class="form-group">
+                <label>Street Address</label>
                 <input type="text" name="method_line1" placeholder="Street Address" required>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>City</label>
                     <input type="text" name="method_city" placeholder="City" required>
+                </div>
+                <div class="form-group">
+                    <label>Postal Code</label>
                     <input type="text" name="method_postalcode" placeholder="Postal Code" required>
                 </div>
+            </div>
+            <div class="form-group">
+                <label>Country</label>
                 <input type="text" name="method_country" value="Philippines" readonly>
-            </fieldset>
+            </div>
 
             <!-- Card Section -->
-            <div id="cardSection" style="display:none;">
-                <h3 style="color: #1a5d1a;">Card Details</h3>
+            <div id="cardSection" style="display:none; margin-top: 20px;">
+                <h3 style="color: #1a5d1a; margin-bottom: 15px;">Card Details</h3>
                 <div class="form-group">
                     <label>Card Number</label>
                     <input type="text" name="method_cardnumber" maxlength="19" placeholder="1234 5678 9012 3456">
@@ -544,8 +580,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const baseRow = document.createElement('tr');
                 baseRow.innerHTML = `
                     <td>${category}</td>
-                    <td style="text-align: r">${data.qty}</td>
-                    <td style="text-align: r">₱${data.baseTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="text-align: right">${data.qty}</td>
+                    <td style="text-align: right">₱${data.baseTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(baseRow);
 
@@ -557,9 +593,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 const mealRow = document.createElement('tr');
                 mealRow.innerHTML = `
-                    <td style="padding-left: 2">Meal Fee</td>
-                    <td style="text-align: r">${data.qty}</td>
-                    <td style="text-align: r">₱${mealTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="padding-left: 20px;">Meal Fee</td>
+                    <td style="text-align: right">${data.qty}</td>
+                    <td style="text-align: right">₱${mealTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(mealRow);
                 categorySubtotal += mealTotal;
@@ -576,9 +612,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 const transportRow = document.createElement('tr');
                 transportRow.innerHTML = `
-                    <td style="padding-left: 2">Transport Fee</td>
-                    <td style="text-align: r">${data.qty}</td>
-                    <td style="text-align: r">₱${transportTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="padding-left: 20px;">Transport Fee</td>
+                    <td style="text-align: right">${data.qty}</td>
+                    <td style="text-align: right">₱${transportTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 tbody.appendChild(transportRow);
                 categorySubtotal += transportTotal;
@@ -592,8 +628,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const discountRow = document.createElement('tr');
             discountRow.innerHTML = `
                 <td>Discount</td>
-                <td style="text-align: r">-</td>
-                <td style="text-align: r">-₱${bookingData.discount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td style="text-align: right">-</td>
+                <td style="text-align: right">-₱${bookingData.discount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
             `;
             tbody.appendChild(discountRow);
         }
@@ -637,7 +673,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[₱,]/g, '')) || 0;
 
             document.getElementById('methodcategory_processing_fee').value = fee.toFixed(2);
-            document.getElementById('method_amount').value = (grandTotal + fee).toFixed(2); 
+            document.getElementById('paymentinfo_total_amount').value = (grandTotal + fee).toFixed(2); 
             document.querySelectorAll('.payment-type-section').forEach(section => {
                 section.style.display = 'none';
             });
@@ -691,8 +727,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const fee = parseFloat(document.querySelector('[name="methodcategory_processing_fee"]').value) || 0;
     const total = baseAmount + fee;
 
-    document.getElementById('method_amount').value = total.toFixed(2);
-    document.querySelector('[name="method_amount"]').value = total.toFixed(2);
+    document.getElementById('paymentinfo_total_amount').value = total.toFixed(2);
+    document.querySelector('[name="paymentinfo_total_amount"]').value = total.toFixed(2);
     document.getElementById('finalPayable').textContent = '₱' + total.toLocaleString('en-US', {minimumFractionDigits: 2});
     document.getElementById('payButtonAmount').textContent = '₱' + total.toLocaleString('en-US', {minimumFractionDigits: 2});
     document.querySelector('[name="methodcategory_processing_fee"]').value = fee;

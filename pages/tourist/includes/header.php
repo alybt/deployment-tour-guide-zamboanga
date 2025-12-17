@@ -144,8 +144,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             <i class="fas fa-search me-1"></i> Travel
                         </a>
                         <ul class="dropdown-menu shadow-sm">
-                            <li><a class="dropdown-item" href="find-guide.php">Find Guide</a></li>
-                            <li><a class="dropdown-item" href="find-tour-packages.php">Find Tour Packages</a></li>
+                            <li><a class="dropdown-item" href="search-guide.php">Find Guide</a></li>
+                            <li><a class="dropdown-item" href="search-tour-packages.php">Find Tour Packages</a></li>
                         </ul>
                     </li>
 
@@ -153,6 +153,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <li class="nav-item">
                         <a class="nav-link <?= in_array($currentPage, $bookingPages) ? 'active' : '' ?>" href="booking.php">
                             <i class="fas fa-calendar-alt me-1"></i> My Booking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'inbox.php' ? 'active' : '' ?>" href="inbox.php">
+                            <i class="fas fa-message me-1"></i> Message
                         </a>
                     </li>
 
@@ -167,26 +172,26 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             </span>
                         </a>
 
-                        <ul id="notification-dropdown" class="dropdown-menu dropdown-menu-end mt-2 shadow-lg border-0" style="width: 380px;">
-                            <li class="dropdown-header bg-primary text-white py-3 rounded-top" style="background-color: var(--secondary-color) ">
+                        <ul id="notification-dropdown" class="dropdown-menu dropdown-menu-end mt-2 shadow-lg border-0" style="width: 380px; max-width: 95vw;">
+                            <li class="dropdown-header bg-primary text-white py-3 rounded-top" style="background-color: var(--secondary-color) !important;">
                                 <div class="d-flex justify-content-between align-items-center px-3">
                                     <strong>Notifications</strong>
-                                    <span class="badge bg-light text-primary" style="color: var(--secondary-color) !i"><?= count($touristNotification) ?></span>
+                                    <span class="badge bg-light text-primary" style="color: var(--secondary-color) !important; background-color: var(--secondary-accent) !important;"><?= count($touristNotification) ?></span>
                                 </div>
                             </li>
 
-                            <div id="notification-list-container" class="px-2" style="max-height: 70vh; overflow-y: auto;">
+                            <div id="notification-list-container" class="px-2" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
                                 <?php require_once "components/notification-list.php";  ?>
                             </div>
 
                             <li><hr class="dropdown-divider my-0"></li>
-                            <li><a class="dropdown-item text-center py-3 fw-bold" href="notifications.php" style="color: var(--secondary-color) !i">View All Notifications</a></li>
+                            <li><a class="dropdown-item text-center py-3 fw-bold" href="notifications.php" style="color: var(--secondary-color) !important;">View All Notifications</a></li>
                         </ul>
                     </li>
                     
                     <?php if ($account_ID): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?= $currentPage === 'profile.php' ? 'active' : '' ?>" href="profile.php">
+                            <a class="nav-link <?= $currentPage === 'profile.php' ? 'active' : '' ?>" href="dashboard-profile.php">
                                 <i class="fas fa-user-circle me-1"></i> Profile
                             </a>
                         </li>

@@ -271,3 +271,72 @@
 #category {
     padding-bottom: 40px;
 }
+
+#category .container-fluid {
+    width: 100%;
+    /* Keep padding for space around the content */
+    padding: 2rem 3rem; 
+    box-sizing: border-box; 
+}
+
+#category h2 {
+    margin-bottom: 1rem;
+    text-align: start;
+}
+
+/* --- TILE ROW FIX: Horizontal Flexbox and Scrolling --- */
+#category .card-tile-section {
+    /* 1. Use Flexbox to align items horizontally */
+    display: flex;
+    /* CRITICAL: Prevent the tiles from wrapping to the next line */
+    flex-wrap: nowrap; 
+    
+    /* 2. Enable horizontal scrolling and hide vertical overflow */
+    overflow-x: scroll;
+    overflow-y: hidden;
+    
+    /* 3. Implement Scroll Snapping */
+    scroll-snap-type: x mandatory; 
+    
+    /* 4. Scrollbar Hiding */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    
+    /* Remove the 'gap' property used for the grid */
+    gap: 0; 
+}
+
+/* Scrollbar Hiding for Webkit */
+#category .card-tile-section::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- TILE STYLES (The Children) --- */
+/* Target the wrapper for the card (formerly .category-tile or .col-sm-4) */
+.category-tile {
+    /* CRITICAL: Prevents tiles from shrinking and forces them off-screen */
+    flex-shrink: 0; 
+    /* Defines the width of each visible tile (e.g., 3 tiles shown on desktop) */
+    width: 33.333%; 
+    
+    /* Defines the snapping point */
+    scroll-snap-align: start; 
+    
+    /* Add horizontal spacing between tiles */
+    padding: 0 10px; 
+    margin-bottom: 0; 
+}
+
+/* --- THE CARD STYLES (Minor tweaks) --- */
+#category .card {
+  display: flex; 
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 300px;
+  width: 100%; 
+  background-size: cover !important;
+  background-position: center !important;
+  color: white; /* Text color */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Text shadow */
+  padding: 20px;
+}

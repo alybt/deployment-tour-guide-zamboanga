@@ -123,3 +123,45 @@ button:active {
 .test-button + small {
   font-size: 0.85rem;
 }
+
+/* ===== Error & Success Messages ===== */
+.error {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.success {
+  background-color: var(--success-color);
+  color: var(--white);
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+/* ===== Section Container ===== */
+div.section-header {
+  background: var(--light-bg);
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  form {
+    padding: 25px 20px;
+  }
+
+  h2, h3 {
+    font-size: 1.1rem;
+  }
+}
+
+h2 {
+  text-align: center;
+  color: var(--white);
+  margin-bottom: 15px;
+}

@@ -89,7 +89,7 @@ trait Itinerary
                         <h2>Spots You'll Visit</h2>
                         <div class="spots">
                             <?php foreach ($spots as $spot): ?>
-                                <div style="margin:12px">
+                                <div style="margin:12px 0;">
                                     <strong><?= htmlspecialchars($spot['spots_name']) ?></strong><br>
                                     <small style="color:#555"><?= htmlspecialchars($spot['spots_description']) ?></small>
                                 </div>
@@ -110,7 +110,7 @@ trait Itinerary
                         <?php endforeach; ?>
                     </div>
 
-                    <div style="text-align:center; padding:30px; background:#dbeafe;">
+                    <div style="text-align:center; padding:30px; background:#dbeafe; border-radius:12px;">
                         <h3>Get Ready for an Amazing Adventure!</h3>
                         <p>Your guide will contact you 24 hours before departure.</p>
                         <p><strong>Emergency:</strong> +63 912 345 6789</p>

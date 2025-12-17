@@ -14,14 +14,14 @@ echo "<h3>Testing fetchCity($test_province_ID):</h3>";
 $cities = $t->fetchCity($test_province_ID);
 
 if ($cities && is_array($cities) && count($cities) > 0) {
-    echo "<p style='color: gre'>✓ Found " . count($cities) . " cities</p>";
+    echo "<p style='color: green;'>✓ Found " . count($cities) . " cities</p>";
     echo "<ul>";
     foreach ($cities as $city) {
         echo "<li>ID: " . $city['city_ID'] . " - " . $city['city_name'] . "</li>";
     }
     echo "</ul>";
 } else {
-    echo "<p style='color: r'>✗ No cities found for province_ID = $test_province_ID</p>";
+    echo "<p style='color: red;'>✗ No cities found for province_ID = $test_province_ID</p>";
 }
 
 // Test the actual fetch-city.php endpoint

@@ -5,14 +5,12 @@ require_once "trait/account/account-login.php";
 require_once "trait/tour/tour-packages.php";
 require_once "trait/tour/tour-spots.php";
 require_once "trait/tour/tour-packagespots.php";
-require_once "trait/tour/schedule.php";
-require_once "trait/tour/pricing.php";
-require_once "trait/tour/people.php";
+// schedule, pricing, and people tables are flattened into Tour_Package
 
 
 class Guide extends Database {
     use AccountLoginTrait;
-    use TourPackagesTrait, PeopleTrait, PricingTrait, ScheduleTrait;
+    use TourPackagesTrait;
     use TourSpotsTrait;
     use TourPackageSpot;
 
@@ -21,18 +19,18 @@ class Guide extends Database {
         $sql = "SELECT 
                     g.guide_ID,
                     CONCAT(
-                        n.name_first, 
-                        IF(n.name_middle IS NOT NULL, CONCAT(' ', n.name_middle), ''),
+                        ul.name_first, 
+                        IF(ul.name_middle IS NOT NULL AND ul.name_middle != '', CONCAT(' ', ul.name_middle), ''),
                         ' ', 
-                        n.name_last,
-                        IF(n.name_suffix IS NOT NULL, CONCAT(' ', n.name_suffix), '')
+                        ul.name_last,
+                        IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
                     ) AS guide_name
                 FROM Guide g
                 JOIN Account_Info ai ON g.account_ID = ai.account_ID
                 JOIN User_Login ul ON ai.user_ID = ul.user_ID
-                JOIN Person p ON ul.person_ID = p.person_ID
-                JOIN Name_Info n ON p.name_ID = n.name_ID
-                ORDER BY n.name_last, n.name_first";
+                
+                
+                ORDER BY ul.name_last, ul.name_first";
         $db = $this->connect();
         $query = $db->prepare($sql);
 
@@ -47,11 +45,11 @@ class Guide extends Database {
         $sql = "SELECT 
                     g.guide_ID,
                     CONCAT(
-                        n.name_first, 
-                        IF(n.name_middle IS NOT NULL, CONCAT(' ', n.name_middle), ''),
+                        ul.name_first, 
+                        IF(ul.name_middle IS NOT NULL AND ul.name_middle != '', CONCAT(' ', ul.name_middle), ''),
                         ' ', 
-                        n.name_last,
-                        IF(n.name_suffix IS NOT NULL, CONCAT(' ', n.name_suffix), '')
+                        ul.name_last,
+                        IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
                     ) AS guide_name,
                     ci.contactinfo_email AS guide_email,
                     gl.license_number AS guide_license,
@@ -59,11 +57,9 @@ class Guide extends Database {
                 FROM Guide g
                 JOIN guide_license gl ON g.license_ID = gl.license_ID
                 JOIN Account_Info ai ON g.account_ID = ai.account_ID
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID
-                JOIN Person p ON ul.person_ID = p.person_ID
-                JOIN Contact_Info ci ON ci.contactinfo_ID = p.contactinfo_ID
-                JOIN Name_Info n ON p.name_ID = n.name_ID
-                ORDER BY n.name_last, n.name_first";
+                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+                LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
+                ORDER BY ul.name_last, ul.name_first";
         $db = $this->connect();
         $query = $db->prepare($sql);
 
@@ -106,7 +102,6 @@ class Guide extends Database {
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
-    
 
     public function getPricingByID($pricingID) {
         $db = $this->connect();
@@ -149,26 +144,29 @@ class Guide extends Database {
                 throw new Exception("Package not found");
             }
 
-            // Update schedule and related information
-            $schedule_ID = $this->addgetSchedule($schedule_days, $numberofpeople_maximum, $numberofpeople_based, 
-                                               $currency, $basedAmount, $discount, $db);
-            if (!$schedule_ID) {
-                throw new Exception("Failed to update schedule");
-            }
-
-            // Update tour package
+            // Update tour package (flattened)
             $sql = "UPDATE Tour_Package SET 
                     guide_ID = :guide_ID,
                     tourpackage_name = :tourpackage_name,
                     tourpackage_desc = :tourpackage_desc,
-                    schedule_ID = :schedule_ID
+                    schedule_days = :schedule_days,
+                    numberofpeople_maximum = :numberofpeople_maximum,
+                    numberofpeople_based = :numberofpeople_based,
+                    pricing_currency = :pricing_currency,
+                    pricing_foradult = :pricing_foradult,
+                    pricing_discount = :pricing_discount
                     WHERE tourpackage_ID = :tourpackage_ID";
             
             $query = $db->prepare($sql);
             $query->bindParam(':guide_ID', $guide_ID);
             $query->bindParam(':tourpackage_name', $tourpackage_name);
             $query->bindParam(':tourpackage_desc', $tourpackage_desc);
-            $query->bindParam(':schedule_ID', $schedule_ID);
+            $query->bindParam(':schedule_days', $schedule_days);
+            $query->bindParam(':numberofpeople_maximum', $numberofpeople_maximum);
+            $query->bindParam(':numberofpeople_based', $numberofpeople_based);
+            $query->bindParam(':pricing_currency', $currency);
+            $query->bindParam(':pricing_foradult', $basedAmount);
+            $query->bindParam(':pricing_discount', $discount);
             $query->bindParam(':tourpackage_ID', $tourpackage_ID);
             
             if (!$query->execute()) {
@@ -206,12 +204,8 @@ class Guide extends Database {
         $db = $this->connect();
         try {
             // Get tour package information
-            $sql = "SELECT tp.*, s.schedule_days, nop.numberofpeople_maximum, nop.numberofpeople_based,
-                    p.pricing_currency, p.pricing_based, p.pricing_discount
+            $sql = "SELECT tp.*
                     FROM Tour_Package tp
-                    JOIN Schedule s ON tp.schedule_ID = s.schedule_ID
-                    JOIN Number_Of_People nop ON s.numberofpeople_ID = nop.numberofpeople_ID
-                    JOIN Pricing p ON nop.pricing_ID = p.pricing_ID
                     WHERE tp.tourpackage_ID = :tourpackage_ID";
             
             $query = $db->prepare($sql);
@@ -251,14 +245,14 @@ class Guide extends Database {
         $sql = "SELECT s.schedule_ID
                 FROM Schedule s
                 JOIN Number_Of_People nop ON s.numberofpeople_ID = nop.numberofpeople_ID
-                JOIN Pricing p ON nop.pricing_ID = p.pricing_ID
+                JOIN Pricing p ON nop.pricing_ID = ul.pricing_ID
                 WHERE 
                     s.schedule_days = :schedule_days
                     AND nop.numberofpeople_maximum = :max
                     AND nop.numberofpeople_based = :based
-                    AND p.pricing_currency = :currency
-                    AND p.pricing_based = :basedAmount
-                    AND p.pricing_discount = :discount";
+                    AND ul.pricing_currency = :currency
+                    AND ul.pricing_based = :basedAmount
+                    AND ul.pricing_discount = :discount";
                     
         $query = $db->prepare($sql);
         $query->bindParam(':schedule_days', $schedule_days);
@@ -297,7 +291,7 @@ class Guide extends Database {
         $sql = "SELECT account_ID FROM Account_Info WHERE user_ID = :user_ID AND role_ID = 3";
         $db = $this->connect();
         $query_select = $db->prepare($sql);
-        $query_select->bindParam(":user_ID", $user_ID);
+        $query_select->bindParam(':user_ID', $user_ID);
         $query_select->execute();
         $result = $query_select->fetch();
 
@@ -307,7 +301,7 @@ class Guide extends Database {
 
         $sql = "INSERT INTO Account_Info(user_ID, role_ID) VALUES (:user_ID, 3)";
         $query_insert = $db->prepare($sql);
-        $query_insert->bindParam(":user_ID", $user_ID);
+        $query_insert->bindParam(':user_ID', $user_ID);
 
         if ($query_insert->execute()) {
             return $db->lastInsertId();
@@ -319,44 +313,41 @@ class Guide extends Database {
     public function changeAccountToTourist($user_ID){
         $db = $this->connect();
         $db->beginTransaction();
-
         try {
-           $sql = "SELECT account_ID FROM Account_Info WHERE user_ID = :user_ID AND role_ID = 3";
-            $db = $this->connect();
-            $query_select = $db->prepare($sql);
-            $query_select->bindParam(":user_ID", $user_ID);
-            $query_select->execute();
-            $result = $query_select->fetch();
-
-            if($result){
-                return $result["account_ID"];
+            $sql = "SELECT account_ID FROM Account_Info WHERE user_ID = :user_ID AND role_ID = 3";
+            $qs = $db->prepare($sql);
+            $qs->bindParam(':user_ID', $user_ID);
+            $qs->execute();
+            $existing = $qs->fetch(PDO::FETCH_ASSOC);
+            if ($existing && isset($existing['account_ID'])) {
+                $db->commit();
+                return (int)$existing['account_ID'];
             }
-
-            $sql = "INSERT INTO Account_Info(user_ID, role_ID, account_status) VALUES (:user_ID, 3, Active)";
-            $query_insert = $db->prepare($sql);
-            $query_insert->bindParam(":user_ID", $user_ID);
-
-            if ($query_insert->execute()) {
-                return $db->lastInsertId();
-            } else {
+            $sql = "INSERT INTO Account_Info(user_ID, role_ID, account_status) VALUES (:user_ID, 3, 'Active')";
+            $qi = $db->prepare($sql);
+            $qi->bindParam(':user_ID', $user_ID);
+            if (!$qi->execute()) {
+                $db->rollBack();
                 return false;
             }
-           
+            $newId = (int)$db->lastInsertId();
+            $db->commit();
+            return $newId;
         } catch (PDOException $e) {
             $db->rollBack();
-            $this->setLastError($e->getMessage());
-            error_log("Change Account Error: " . $e->getMessage()); 
+            error_log("Change Account Error: " . $e->getMessage());
             return false;
         }
     }
 
     public function getTotalEarnings($guide_ID) {
-        $sql = "SELECT COALESCE(SUM(pi.paymentinfo_total_amount), 0) AS total_earnings
+        $sql = "SELECT COALESCE(SUM(pt.transaction_total_amount), 0) AS total_earnings
             FROM booking b
-            JOIN payment_info pi ON pi.booking_ID = b.booking_ID
+            JOIN Payment_Transaction pt ON pt.booking_ID = b.booking_ID
             JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
             WHERE tp.guide_ID = :guide_ID
-            AND b.booking_status IN ('Completed')";
+            AND b.booking_status IN ('Completed')
+            AND pt.transaction_status = 'Paid'";
 
         try {
             $db = $this->connect();
@@ -387,34 +378,32 @@ class Guide extends Database {
         $sql = " SELECT 
                 -- Guide & Account
                 g.guide_ID,
-                ai.account_ID,
-                ai.account_status,
-                ai.account_rating_score,
-                ai.account_created_at,
+                ai.*,
+                a.account_profilepic AS profile_pic
                 
                 -- Login
                 ul.user_username,
                 
                 -- Personal Info
-                p.person_Nationality,
-                p.person_Gender,
-                p.person_DateOfBirth,
+                ul.person_Nationality,
+                ul.person_Gender,
+                ul.person_DateOfBirth,
                 
                 -- Name
-                ni.name_first,
-                ni.name_second,
-                ni.name_middle,
-                ni.name_last,
-                ni.name_suffix,
+                ul.name_first,
+                ul.name_second,
+                ul.name_middle,
+                ul.name_last,
+                ul.name_suffix,
                 
                 -- Full Name (Clean Concatenation)
                 TRIM(
                     CONCAT(
-                        ni.name_first, ' ',
-                        COALESCE(ni.name_second, ''), ' ',
-                        COALESCE(ni.name_middle, ''), ' ',
-                        ni.name_last,
-                        IF(ni.name_suffix IS NOT NULL AND ni.name_suffix != '', CONCAT(' ', ni.name_suffix), '')
+                        ul.name_first, ' ',
+                        COALESCE(ul.name_second, ''), ' ',
+                        COALESCE(ul.name_middle, ''), ' ',
+                        ul.name_last,
+                        IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
                     )
                 ) AS guide_name,
                 
@@ -425,11 +414,10 @@ class Guide extends Database {
                 CONCAT(COALESCE(c.country_codenumber, ''), pn.phone_number) AS guide_phonenumber,
                 pn.phone_number AS phone_number_only,
                 c.country_name,
-                
-                -- Address (concatenated for convenience)
+                 
                 CONCAT(
-                    TRIM(CONCAT(addr.address_street, ' ', addr.address_houseno)),
-                    IF(addr.barangay_ID IS NOT NULL, CONCAT(', ', b.barangay_name), ''),
+                    TRIM(CONCAT(ci.address_street, ' ', ci.address_houseno)),
+                    IF(ci.barangay_ID IS NOT NULL, CONCAT(', ', b.barangay_name), ''),
                     IF(city.city_ID IS NOT NULL, CONCAT(', ', city.city_name), ''),
                     IF(prov.province_ID IS NOT NULL, CONCAT(', ', prov.province_name), ''),
                     IF(reg.region_ID IS NOT NULL, CONCAT(', ', reg.region_name), '')
@@ -437,19 +425,15 @@ class Guide extends Database {
                 
             FROM guide g
             JOIN Account_Info ai ON ai.account_ID = g.account_ID
-            JOIN User_Login ul ON ul.user_ID = ai.user_ID
-            JOIN Person p ON p.person_ID = ul.person_ID
-            
-            LEFT JOIN Name_Info ni ON ni.name_ID = p.name_ID
-            LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = p.contactinfo_ID
+            JOIN User_Login ul ON ul.user_ID = ai.user_ID 
+            LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID
             
             -- Primary Phone (assume one primary or get the first)
             LEFT JOIN Phone_Number pn ON pn.phone_ID = ci.phone_ID
             LEFT JOIN Country c ON c.country_ID = pn.country_ID
             
-            -- Address
-            LEFT JOIN Address_Info addr ON addr.address_ID = ci.address_ID
-            LEFT JOIN Barangay b ON b.barangay_ID = addr.barangay_ID
+            -- Address 
+            LEFT JOIN Barangay b ON b.barangay_ID = ci.barangay_ID
             LEFT JOIN City city ON city.city_ID = b.city_ID
             LEFT JOIN Province prov ON prov.province_ID = city.province_ID
             LEFT JOIN Region reg ON reg.region_ID = prov.region_ID
@@ -471,61 +455,86 @@ class Guide extends Database {
         }
     }
 
+    public function getGuideByBooking($booking_ID){
+        $sql = "SELECT 
+                -- Guide & Account
+                g.guide_ID,
+                g.account_ID,
+                
+                -- Full Name (Clean Concatenation)
+                TRIM(
+                    CONCAT(
+                        ul.name_first, ' ',
+                        COALESCE(ul.name_second, ''), ' ',
+                        COALESCE(ul.name_middle, ''), ' ',
+                        ul.name_last,
+                        IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
+                    )
+                ) AS guide_name
+                
+            FROM booking b
+            JOIN tour_package tp ON tp.tourpackage_ID = b.tourpackage_ID
+            LEFT JOIN guide g ON g.guide_ID = tp.guide_ID  -- Changed to LEFT JOIN
+            LEFT JOIN Account_Info ai ON ai.account_ID = g.account_ID
+            LEFT JOIN User_Login ul ON ul.user_ID = ai.user_ID 
+            LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
+            WHERE b.booking_ID = :booking_ID
+            LIMIT 1
+        ";
+
+        try {
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute([':booking_ID' => $booking_ID]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Return null if no guide is assigned (guide_ID is null)
+            return ($result && $result['guide_ID']) ? $result : null;
+
+        } catch (PDOException $e) {
+            error_log("getGuideByBooking Error: " . $e->getMessage());
+            return null;
+        }
+    }
+
     public function viewTop5GuideInfoByRate(){
         $sql = "SELECT g.guide_ID, 
-                -- Guide Full Name
                 CONCAT(
-                    n.name_first, 
-                    IF(n.name_middle IS NOT NULL AND n.name_middle != '', CONCAT(' ', n.name_middle), ''),
+                    ul.name_first, 
+                    IF(ul.name_middle IS NOT NULL AND ul.name_middle != '', CONCAT(' ', ul.name_middle), ''),
                     ' ',
-                    n.name_last,
-                    IF(n.name_suffix IS NOT NULL AND n.name_suffix != '', CONCAT(' ', n.name_suffix), '')
+                    ul.name_last,
+                    IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
                 ) AS guide_name, 
-                -- Contact
                 ci.contactinfo_email AS guide_email, 
-                -- License Info
                 gl.license_number,
                 gl.license_verification_status,
                 gl.license_issued_date,
                 gl.license_expiry_date, 
-                -- Account Info
                 ai.*,
                 g.guide_ID, 
-                -- Languages (comma-separated)
                 GROUP_CONCAT(l.languages_name ORDER BY l.languages_name SEPARATOR ', ') AS guide_languages 
             FROM Guide g 
-            -- License
-            JOIN Guide_License gl 
-                ON g.license_ID = gl.license_ID 
-            -- Account
-            JOIN Account_Info ai 
-                ON g.account_ID = ai.account_ID 
-            JOIN User_Login ul 
-                ON ai.user_ID = ul.user_ID 
-            JOIN Person p 
-                ON ul.person_ID = p.person_ID 
-            JOIN Contact_Info ci 
-                ON p.contactinfo_ID = ci.contactinfo_ID 
-            JOIN Name_Info n 
-                ON p.name_ID = n.name_ID 
-            -- Languages
-            LEFT JOIN Guide_Languages glang 
-                ON g.guide_ID = glang.guide_ID 
-            LEFT JOIN Languages l 
-                ON glang.languages_ID = l.languages_ID 
+            JOIN Guide_License gl ON g.license_ID = gl.license_ID 
+            JOIN Account_Info ai ON g.account_ID = ai.account_ID 
+            JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+            
+            LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
+            
+            LEFT JOIN Guide_Languages glang ON g.guide_ID = glang.guide_ID 
+            LEFT JOIN Languages l ON glang.languages_ID = l.languages_ID 
             GROUP BY 
                 g.guide_ID,
                 gl.license_ID,
                 ai.account_ID,
                 ci.contactinfo_email,
-                n.name_first,
-                n.name_middle,
-                n.name_last,
-                n.name_suffix 
+                ul.name_first,
+                ul.name_middle,
+                ul.name_last,
+                ul.name_suffix 
             ORDER BY 
                 ai.account_rating_score DESC,
-                n.name_last,
-                n.name_first
+                ul.name_last,
+                ul.name_first
             LIMIT 5";  
 
         $db = $this->connect();
@@ -551,10 +560,11 @@ class Guide extends Database {
             $db = $this->connect();
             $query = $db->prepare($sql);
             $query->execute([':account_ID' => $account_ID]);
-            return $query->fetchAll();
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+            return $result ?: ['average_rating' => 0, 'rating_count' => 0];
         } catch (Exception $e) {
             error_log("guideRatingAndCount Error: " . $e->getMessage());
-            return 0.0;
+            return ['average_rating' => 0, 'rating_count' => 0];
         }
 
     }
@@ -563,18 +573,14 @@ class Guide extends Database {
         $sql = "SELECT
                      G.guide_ID,
                      AI.account_nickname AS Guide_Nickname,
-                     CONCAT(NI.name_first, ' ', NI.name_last) AS Full_Name,
+                     CONCAT(ul.name_first, ' ', ul.name_last) AS Full_Name,
                      GROUP_CONCAT(L.languages_name SEPARATOR ', ') AS Spoken_Languages
                 FROM
                     Guide G
                 JOIN
                     Account_Info AI ON G.account_ID = AI.account_ID
                 JOIN
-                    User_Login UL ON AI.user_ID = UL.user_ID
-                JOIN
-                    Person P ON UL.person_ID = P.person_ID
-                JOIN
-                    Name_Info NI ON P.name_ID = NI.name_ID
+                    User_Login UL ON AI.user_ID = UL.user_ID 
                 LEFT JOIN
                     Guide_Languages GL ON G.guide_ID = GL.guide_ID
                 LEFT JOIN
@@ -590,6 +596,120 @@ class Guide extends Database {
             return 0.0;
         }
 
+    }
+
+    public function viewAllGuideForSearch(){
+        $sql = "SELECT g.guide_ID, 
+                CONCAT(
+                    ul.name_first, 
+                    IF(ul.name_middle IS NOT NULL AND ul.name_middle != '', CONCAT(' ', ul.name_middle), ''),
+                    ' ',
+                    ul.name_last,
+                    IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
+                ) AS guide_name, 
+                ci.contactinfo_email AS guide_email, 
+                gl.license_number,
+                gl.license_verification_status,
+                gl.license_issued_date,
+                gl.license_expiry_date, 
+                ai.*,
+                g.guide_ID, 
+                GROUP_CONCAT(l.languages_name ORDER BY l.languages_name SEPARATOR ', ') AS guide_languages 
+            FROM Guide g 
+            JOIN Guide_License gl ON g.license_ID = gl.license_ID 
+            JOIN Account_Info ai ON g.account_ID = ai.account_ID 
+            JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+            
+            LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
+            
+            LEFT JOIN Guide_Languages glang ON g.guide_ID = glang.guide_ID 
+            LEFT JOIN Languages l ON glang.languages_ID = l.languages_ID 
+            GROUP BY 
+                g.guide_ID,
+                gl.license_ID,
+                ai.account_ID,
+                ci.contactinfo_email,
+                ul.name_first,
+                ul.name_middle,
+                ul.name_last,
+                ul.name_suffix 
+            ORDER BY 
+                ai.account_rating_score DESC,
+                ul.name_last,
+                ul.name_first
+            LIMIT 5";  
+
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+
+        if ($query->execute()){
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } else { 
+            error_log("SQL Error in viewAllGuideForSearch: " . implode(" ", $query->errorInfo()));
+            return false;
+        }
+    }
+
+    public function getGuideAccountID($guide_ID){
+        $sql = "SELECT account_ID FROM Guide
+        WHERE guide_ID = :guide_ID";
+        
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+        $query->bindParam(':guide_ID', $guide_ID); 
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getGuideDetails($guide_ID){
+        $sql = "SELECT g.* FROM Guide g
+        WHERE g.guide_ID = :guide_ID";
+        
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+        $query->bindParam(':guide_ID', $guide_ID); 
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getGuideBalanace($guide_ID){
+        $sql = "SELECT guide_balance FROM Guide 
+        WHERE guide_ID = :guide_ID";
+        
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+        $query->bindParam(':guide_ID', $guide_ID); 
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function getAllPayoutofGuide($guide_ID){
+        $sql = "SELECT 
+            COALESCE(SUM(amount), 0.00) AS total_payout 
+            FROM guide_money_history  
+        WHERE guide_ID = :guide_ID AND reference_name = 'Payout'";
+        
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+        $query->bindParam(':guide_ID', $guide_ID); 
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function getuserIDByGuide($guide_ID){
+        $sql = "SELECT ul.user_ID FROM guide g
+            JOIN Account_Info ai ON g.account_ID = ai.account_ID
+            JOIN User_Login ul ON ai.user_ID = ul.user_ID
+            WHERE g.guide_ID = :guide_ID";
+        
+        $db = $this->connect();
+        $query = $db->prepare($sql);
+        $query->bindParam(':guide_ID', $guide_ID); 
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result;
     }
 
 }
