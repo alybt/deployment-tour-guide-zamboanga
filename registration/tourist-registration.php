@@ -204,6 +204,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Proceed if no errors
     if (empty($errors)) {
     try {
+        $raw_password = $tourist['password'] ?? ''; 
+        $secure_hash = password_hash($raw_password, PASSWORD_DEFAULT);
+
         $result = $touristObj->addTourist(
             $tourist['name_first'] ?? '',
             $tourist['name_second'] ?? '',
@@ -224,7 +227,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $tourist['person_gender'] ?? '',
             $tourist['person_dateofbirth'] ?? '',
             $tourist['username'] ?? '',
-            $tourist['password'] ?? ''
+            $secure_hash
         );
 
         if ($result) {
