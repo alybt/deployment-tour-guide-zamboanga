@@ -4,7 +4,7 @@ trait ContactInfoTrait {
 
     // Check Email If Exists
     public function checkEmailExists($email) {
-        $sql = "SELECT COUNT(*) AS total FROM Contact_Info WHERE contactinfo_email = :email";
+        $sql = "SELECT COUNT(*) AS total FROM contact_info WHERE contactinfo_email = :email";
         $query = $this->connect()->prepare($sql);
         $query->bindParam(":email", $email);
         
@@ -36,7 +36,7 @@ trait ContactInfoTrait {
             return false;
         }
 
-        $sql = "INSERT INTO Contact_Info (
+        $sql = "INSERT INTO contact_info (
                     address_ID, 
                     phone_ID, 
                     contactinfo_email, 
@@ -124,7 +124,7 @@ trait ContactInfoTrait {
                 $phone_ID = $this->addgetPhoneNumber($country_ID, $phone_number, $db);
                 $emergency_ID = $this->addgetEmergencyID($emergency_country_ID, $emergency_phonenumber, $emergency_name, $emergency_relationship, $db);
 
-                $sql = "UPDATE Contact_Info SET 
+                $sql = "UPDATE contact_info SET 
                     address_ID = :address_ID, 
                     phone_ID = :phone_ID, 
                     emergency_ID = :emergency_ID,
@@ -158,7 +158,7 @@ trait ContactInfoTrait {
         if (!$address_ID || !$phone_ID || !$emergency_ID) {
             return false;
         }
-        $sql = "INSERT INTO Contact_Info(
+        $sql = "INSERT INTO contact_info(
                     address_ID, 
                     phone_ID, 
                     contactinfo_email, 

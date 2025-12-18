@@ -38,7 +38,7 @@ trait AccountProfileTrait {
             }
 
             // Get old profile picture to delete it
-            $stmt = $this->conn->prepare("SELECT account_profilepic FROM Account_Info WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("SELECT account_profilepic FROM account_info WHERE account_ID = ?");
             $stmt->execute([$account_ID]);
             $old_pic = $stmt->fetch();
 
@@ -54,7 +54,7 @@ trait AccountProfileTrait {
             }
 
             // Update database
-            $stmt = $this->conn->prepare("UPDATE Account_Info SET account_profilepic = ? WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("UPDATE account_info SET account_profilepic = ? WHERE account_ID = ?");
             
             if ($stmt->execute([$file_path, $account_ID])) {
                 // Delete old profile picture if exists
@@ -86,7 +86,7 @@ trait AccountProfileTrait {
     public function deleteProfilePicture(int $account_ID): array {
         try {
             // Get current profile picture
-            $stmt = $this->conn->prepare("SELECT account_profilepic FROM Account_Info WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("SELECT account_profilepic FROM account_info WHERE account_ID = ?");
             $stmt->execute([$account_ID]);
             $account = $stmt->fetch();
 
@@ -96,7 +96,7 @@ trait AccountProfileTrait {
             }
 
             // Update database to NULL
-            $stmt = $this->conn->prepare("UPDATE Account_Info SET account_profilepic = NULL WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("UPDATE account_info SET account_profilepic = NULL WHERE account_ID = ?");
             
             if ($stmt->execute([$account_ID])) {
                 // Delete physical file if exists
@@ -121,7 +121,7 @@ trait AccountProfileTrait {
  
     public function getProfilePicture(int $account_ID): ?string {
         try {
-            $stmt = $this->conn->prepare("SELECT account_profilepic FROM Account_Info WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("SELECT account_profilepic FROM account_info WHERE account_ID = ?");
             $stmt->execute([$account_ID]);
             $account = $stmt->fetch();
             
@@ -134,7 +134,7 @@ trait AccountProfileTrait {
  
     public function accountExists(int $account_ID): bool {
         try {
-            $stmt = $this->conn->prepare("SELECT account_ID FROM Account_Info WHERE account_ID = ?");
+            $stmt = $this->conn->prepare("SELECT account_ID FROM account_info WHERE account_ID = ?");
             $stmt->execute([$account_ID]);
             return $stmt->fetch() !== false;
         } catch (PDOException $e) {

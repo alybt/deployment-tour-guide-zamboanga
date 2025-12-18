@@ -44,7 +44,7 @@ trait GuideEarningTrait{
 
 
     public function earningUpdateRelease($earning_ID, $db){
-        $sql = "UPDATE Guide_Earnings 
+        $sql = "UPDATE guide_earnings 
             SET earning_status ='Released' 
             WHERE earning_ID = :earning_ID";
         $query = $db->prepare($sql);
@@ -56,7 +56,7 @@ trait GuideEarningTrait{
 
 
     public function addearnings($guide_ID, $balance_after, $db){
-        $sql = "UPDATE Guide
+        $sql = "UPDATE guide
             SET guide_balance = :balance_after 
             WHERE guide_ID = :guide_ID";
         $query = $db->prepare($sql);
@@ -68,7 +68,7 @@ trait GuideEarningTrait{
 
 
     public function getTransactionIDByEarning($earnings_ID){
-        $sql = "SELECT transaction_ID FROM Guide_Earnings 
+        $sql = "SELECT transaction_ID FROM guide_earnings 
             WHERE earning_ID = :earning_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
@@ -99,7 +99,7 @@ trait GuideEarningTrait{
                 throw new Exception("Invalid payout amount");
             }
 
-            $sqlBal = "SELECT guide_balance FROM Guide WHERE guide_ID = :guide_ID FOR UPDATE";
+            $sqlBal = "SELECT guide_balance FROM guide WHERE guide_ID = :guide_ID FOR UPDATE";
             $qBal = $db->prepare($sqlBal);
             $qBal->bindParam(':guide_ID', $guide_ID);
             $qBal->execute();
@@ -112,7 +112,7 @@ trait GuideEarningTrait{
 
             $balance_after = $balance_before - $amount;
 
-            $sqlUpd = "UPDATE Guide SET guide_balance = :balance_after WHERE guide_ID = :guide_ID";
+            $sqlUpd = "UPDATE guide SET guide_balance = :balance_after WHERE guide_ID = :guide_ID";
             $qUpd = $db->prepare($sqlUpd);
             $qUpd->bindParam(':guide_ID', $guide_ID);
             $qUpd->bindParam(':balance_after', $balance_after);

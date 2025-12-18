@@ -22,7 +22,7 @@ trait BookingLogs{
                 return false; 
             }
 
-            $sql= "INSERT INTO Activity_Log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
+            $sql= "INSERT INTO activity_log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
             $query = $db->prepare($sql);
             $query->bindParam(':action_ID', $action_ID);
             $query->bindParam(':activity_description', $action_desc);
@@ -61,7 +61,7 @@ trait BookingLogs{
                 return false; 
             }
 
-            $sql= "INSERT INTO Activity_Log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
+            $sql= "INSERT INTO activity_log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
             $query = $db->prepare($sql);
             $query->bindParam(':action_ID', $action_ID);
             $query->bindParam(':activity_description', $action_desc);
@@ -101,7 +101,7 @@ trait BookingLogs{
                 return false; 
             }
 
-            $sql= "INSERT INTO Activity_Log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
+            $sql= "INSERT INTO activity_log (account_ID, action_ID, activity_description) VALUES (:account_ID, :action_ID, :activity_description)";
             $query = $db->prepare($sql);
             $query->bindParam(':account_ID', $account_ID);
             $query->bindParam(':action_ID', $action_ID);

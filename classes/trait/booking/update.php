@@ -154,7 +154,7 @@ trait UpdateBookings{
                 $db->rollBack();
                 return false;
             } 
-            $sql = "INSERT INTO Activity_Log 
+            $sql = "INSERT INTO activity_log
                     (account_ID, action_ID, activity_description, reference_id, reference_type) 
                     VALUES (NULL, :action_ID, :description, :booking_id, 'booking')";
 

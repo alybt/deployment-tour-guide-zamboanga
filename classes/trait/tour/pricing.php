@@ -3,7 +3,7 @@
 trait PricingTrait {
 
     public function addPricing($currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db){
-        $sql = "INSERT INTO Pricing (
+        $sql = "INSERT INTO Tour_Package (
                     pricing_currency, pricing_foradult, pricing_forchild,
                     pricing_foryoungadult, pricing_forsenior, pricing_forpwd,
                     include_meal, pricing_mealfee, transport_fee, pricing_discount
@@ -37,7 +37,7 @@ trait PricingTrait {
     }
     
     public function updatePricing($pricing_ID ,$currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db){
-        $sql = "UPDATE Pricing SET
+        $sql = "UPDATE Tour_Package SET
             pricing_currency       = :currency,
             pricing_foradult       = :forAdult,
             pricing_forchild       = :forChild,
@@ -69,7 +69,7 @@ trait PricingTrait {
 
     public function getPricingByID($pricingID) {
         $db = $this->connect();
-        $sql = "SELECT * FROM Pricing WHERE pricing_ID = :pricingID";
+        $sql = "SELECT * FROM Tour_Package WHERE pricing_ID = :pricingID";
         $query = $db->prepare($sql);
         $query->bindParam(':pricingID', $pricingID);
         $query->execute();
@@ -77,7 +77,7 @@ trait PricingTrait {
     }
 
     public function deletePricingByID($pricing_ID,$db){
-        $sql = "DELETE FROM Pricing WHERE pricing_ID = :pricing_ID";
+        $sql = "DELETE FROM Tour_Package WHERE pricing_ID = :pricing_ID";
         
         try {
             $query = $db->prepare($sql);
@@ -86,10 +86,10 @@ trait PricingTrait {
             if ($query->execute()) {
                 return true;
             }
-            error_log("Pricing Delete Error: " . print_r($query->errorInfo(), true));
+            error_log("Tour_Package Delete Error: " . print_r($query->errorInfo(), true));
             return false;
         } catch (PDOException $e) {
-            error_log("Pricing Delete Exception: " . $e->getMessage());
+            error_log("Tour_Package Delete Exception: " . $e->getMessage());
             return false;
         }
     }
@@ -99,7 +99,7 @@ trait PricingTrait {
 
     // public function addGetPricing($currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db) {
     //     try {
-    //         $sql = "SELECT pricing_ID FROM Pricing 
+    //         $sql = "SELECT pricing_ID FROM Tour_Package 
     //                 WHERE pricing_currency = :currency
     //                 AND pricing_foradult = :forAdult
     //                 AND pricing_forchild = :forChild
@@ -128,7 +128,7 @@ trait PricingTrait {
     //         if ($result) {
     //             return $result['pricing_ID'];
     //         }
-    //         $sql = "INSERT INTO Pricing (
+    //         $sql = "INSERT INTO Tour_Package (
     //                     pricing_currency, pricing_foradult, pricing_forchild,
     //                     pricing_foryoungadult, pricing_forsenior, pricing_forpwd,
     //                     include_meal, pricing_mealfee, transport_fee, pricing_discount

@@ -54,12 +54,12 @@ class PaymentManager extends Database{
             );
 
             if (!$transaction_ID) {
-                throw new Exception("Failed to insert into Payment_Transaction table.");
+                throw new Exception("Failed to insert into payment_transaction table.");
             }
             
 
             // Step 3: Update booking status
-            $sql = "UPDATE Booking 
+            $sql = "UPDATE booking 
                     SET booking_status = 'Pending for Approval' 
                     WHERE booking_ID = :booking_ID";
             $query = $db->prepare($sql);
@@ -69,12 +69,12 @@ class PaymentManager extends Database{
                 throw new Exception("Failed to update booking status.");
             }
 
-            // ✅ If all steps succeeded, commit
+            // If all steps succeeded, commit
             $db->commit();
             return true;
 
         } catch (Exception $e) {
-            // 🔴 Roll back everything on failure
+            // Roll back everything on failure
             $db->rollBack();
             error_log("[addAllPaymentInfo] " . $e->getMessage());
             return false;
@@ -83,7 +83,7 @@ class PaymentManager extends Database{
 
     public function getPaymentByBooking($booking_ID){
         $sql = "SELECT * FROM booking b 
-                JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+                JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
                 JOIN method m ON m.method_ID = pt.method_ID
                 WHERE b.booking_ID = :booking_ID";
         $db = $this->connect();
@@ -100,10 +100,10 @@ class PaymentManager extends Database{
         try {
             $refund_ID = $this->addRefund($transaction_ID, $categoryrefund_ID,$refund_reason, $refund_status, $refund_processingfee, $refund_refundfee, $refund_total_amount, $db);
                 if (!$refund_ID) {
-                    throw new Exception("Failed to insert into Refund table.");
+                    throw new Exception("Failed to insert into refund table.");
                 }
 
-            $sql = "UPDATE Booking 
+            $sql = "UPDATE booking 
                 SET booking_status = 'Refunded' 
                 WHERE booking_ID = :booking_ID";
             $query = $db->prepare($sql);
@@ -112,14 +112,14 @@ class PaymentManager extends Database{
             if (!$query->execute()) {
                 throw new Exception("Failed to update booking status.");
             }
-            $sql = "UPDATE Payment_Transaction pt
+            $sql = "UPDATE payment_transaction pt
                 SET pt.transaction_status = 'Refunded'
                 WHERE pt.booking_ID = :booking_ID";
             $query = $db->prepare($sql);
             $query->bindParam(':booking_ID', $booking_ID);
 
             if (!$query->execute()) {
-                throw new Exception("Failed to update Transaction status.");
+                throw new Exception("Failed to update transaction status.");
             }
 
 
@@ -148,7 +148,7 @@ class PaymentManager extends Database{
                         pt.transaction_total_amount,
                         pt.paymongo_intent_id
                     FROM booking b
-                    JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+                    JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
                     WHERE b.booking_ID = :booking_ID 
                     AND b.tourist_ID = :tourist_ID
                     AND pt.transaction_status = 'Paid'
@@ -174,8 +174,8 @@ class PaymentManager extends Database{
 
             // 2. Get refund category details (for processing fee)
             $catSql = "SELECT cr.*, crn.categoryrefundname_name 
-                    FROM Category_Refund cr
-                    JOIN CategoryRefund_Name crn ON cr.categoryrefundname_ID = crn.categoryrefundname_ID
+                    FROM category_refund cr
+                    JOIN categoryrefund_name crn ON cr.categoryrefundname_ID = crn.categoryrefundname_ID
                     WHERE cr.categoryrefund_ID = :categoryrefund_ID";
 
             $catStmt = $db->prepare($catSql);
@@ -194,7 +194,7 @@ class PaymentManager extends Database{
             }
 
             // 3. Create Refund Request Record
-            $insertSql = "INSERT INTO Refund (
+            $insertSql = "INSERT INTO refund (
                             transaction_ID,
                             categoryrefund_ID,
                             refund_reason,

@@ -62,7 +62,7 @@ class Registration extends Database {
             }
 
 
-            $sql = "INSERT INTO Account_Info (user_ID, role_ID, account_status) VALUES (:user_ID, 3, 'Active')";
+            $sql = "INSERT INTO account_info (user_ID, role_ID, account_status) VALUES (:user_ID, 3, 'Active')";
             $query = $db->prepare($sql);
             $query->bindParam(":user_ID", $user_ID, PDO::PARAM_INT);
 
@@ -144,7 +144,7 @@ class Registration extends Database {
             } catch (PDOException $e) {
             $db->rollBack();
             $this->setLastError($e->getMessage());
-            error_log("Guide Registration Error: " . $e->getMessage()); 
+            error_log("guide Registration Error: " . $e->getMessage()); 
             return false;
         }
 
@@ -166,7 +166,7 @@ class Registration extends Database {
             return false;
         }
 
-        $sql = "INSERT INTO Guide(account_ID, license_ID)
+        $sql = "INSERT INTO guide(account_ID, license_ID)
                 VALUES (:account_ID, :license_ID)";
         $query = $db->prepare($sql);
         $query->bindParam(":license_ID", $license_ID);
@@ -182,7 +182,7 @@ class Registration extends Database {
 
     public function generateLicenseNumber($db){
         $year = date('Y');
-        $stmt = $db->prepare(" SELECT license_number FROM Guide_License
+        $stmt = $db->prepare(" SELECT license_number FROM guide_license
             WHERE license_number LIKE ? ORDER BY license_ID DESC
             LIMIT 1 ");
         $stmt->execute(["LIS-$year-%"]);
@@ -200,7 +200,7 @@ class Registration extends Database {
     }
 
     public function addLicense($license_number, $db){
-        $sql = "INSERT INTO Guide_License(license_number) VALUES (:license_number)";
+        $sql = "INSERT INTO guide_license(license_number) VALUES (:license_number)";
         $query = $db->prepare($sql);
         $query->bindParam(":license_number", $license_number);
         if ($query->execute()) {

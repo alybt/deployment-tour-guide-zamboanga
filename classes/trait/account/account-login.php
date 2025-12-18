@@ -7,7 +7,7 @@ trait AccountLoginTrait {
 
 
     public function addgetAccountLogin($user_ID, $role_ID, $db) {
-        $sql = "SELECT accountlogin_ID FROM Account_Login 
+        $sql = "SELECT accountlogin_ID FROM account_login 
                 WHERE user_ID = :user_ID AND role_ID = :role_ID";
         $query = $db->prepare($sql);
         $query->bindParam(":user_ID", $user_ID);
@@ -21,7 +21,7 @@ trait AccountLoginTrait {
         
         $created_at = date("Y-m-d H:i:s");
 
-        $sql = "INSERT INTO Account_Login (user_ID, role_ID, account_created_at) 
+        $sql = "INSERT INTO account_login (user_ID, role_ID, account_created_at) 
                 VALUES (:user_ID, :role_ID, :created_at)";
         $query = $db->prepare($sql);
         $query->bindParam(":user_ID", $user_ID);

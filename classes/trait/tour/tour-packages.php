@@ -5,7 +5,7 @@ trait TourPackagesTrait {
     //addGetSchedule($days, $numberofpeople_maximum, $numberofpeople_based, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db)
 
     public function addTourPackage($guide_ID, $name, $desc, $days, $numberofpeople_maximum, $numberofpeople_based, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db) {
-        $sql = "INSERT INTO Tour_Package(
+        $sql = "INSERT INTO tour_package(
                     guide_ID, tourpackage_name, tourpackage_desc,
                     schedule_days, numberofpeople_maximum, numberofpeople_based,
                     pricing_currency, pricing_foradult, pricing_forchild, pricing_foryoungadult,
@@ -42,7 +42,7 @@ trait TourPackagesTrait {
 
     public function updateTourPackages($tourpackage_ID, $guide_ID, $name, $desc, $schedule_ID, $days, $numberofpeople_ID, $numberofpeople_maximum, $numberofpeople_based, $pricing_ID, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db) {
         try {
-            $sql = "UPDATE Tour_Package SET 
+            $sql = "UPDATE tour_package SET 
                         guide_ID = :guide_ID,
                         tourpackage_name = :name,
                         tourpackage_desc = :desc,
@@ -89,7 +89,7 @@ trait TourPackagesTrait {
     }
 
     public function getTourPackageByID($tourpackage_ID){
-        $sql = "SELECT * FROM Tour_Package WHERE tourpackage_ID = :tourpackage_ID";
+        $sql = "SELECT * FROM tour_package WHERE tourpackage_ID = :tourpackage_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(':tourpackage_ID', $tourpackage_ID);
@@ -99,7 +99,7 @@ trait TourPackagesTrait {
     }
 
     public function viewAllPackages(){
-        $sql = "SELECT * FROM Tour_Package";
+        $sql = "SELECT * FROM tour_package";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->execute();
@@ -112,7 +112,7 @@ trait TourPackagesTrait {
                 tp.guide_ID, tp.tourpackage_desc, tp.tourpackage_ID, tp.tourpackage_name,
                 tp.schedule_days, tp.numberofpeople_maximum, tp.numberofpeople_based,
                 tp.pricing_currency, tp.pricing_foradult
-            FROM Tour_Package tp";
+            FROM tour_package tp";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->execute();
@@ -139,10 +139,10 @@ trait TourPackagesTrait {
             tp.pricing_mealfee,
             tp.transport_fee,
             tp.pricing_discount
-        FROM Tour_Package tp
-        JOIN Guide g ON tp.guide_ID = g.guide_ID
-        JOIN Account_Info ai ON g.account_ID = ai.account_ID
-        JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+        FROM tour_package tp
+        JOIN guide g ON tp.guide_ID = g.guide_ID
+        JOIN account_info ai ON g.account_ID = ai.account_ID
+        JOIN user_login ul ON ai.user_ID = ul.user_ID 
         WHERE tp.tourpackage_ID = :tourpackage_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
@@ -233,7 +233,7 @@ trait TourPackagesTrait {
     // TourManager.php  (add inside the class)
     public function filterPackages(array $filters = []): array {
         $sql = "SELECT DISTINCT ul.* 
-                FROM Tour_Package p";
+                FROM tour_package p";
         
         $params = [];
         $conditions = [];
@@ -309,7 +309,7 @@ trait TourPackagesTrait {
     }
 
     // public function getScheduleIDInTourPackageByTourPackageID($tourpackage_ID){
-    //     $sql = "SELECT schedule_ID FROM Tour_Package WHERE tourpackage_ID = :tourpackage_ID";
+    //     $sql = "SELECT schedule_ID FROM tour_package WHERE tourpackage_ID = :tourpackage_ID";
     //     $db = $this->connect();
     //     $query = $db->prepare($sql);
     //     $query->bindParam(':tourpackage_ID', $tourpackage_ID);

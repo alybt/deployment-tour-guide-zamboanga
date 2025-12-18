@@ -3,7 +3,7 @@
 trait MethodTrait{
 
     public function viewAllPaymentMethodCategory(){
-        $sql = "SELECT * FROM Method_Category";
+        $sql = "SELECT * FROM method_category";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->execute();
@@ -11,7 +11,7 @@ trait MethodTrait{
     }
 
     public function getProcessingFeeByID($methodcategory_ID){
-        $sql = "SELECT methodcategory_processing_fee FROM Method_Category";
+        $sql = "SELECT methodcategory_processing_fee FROM method_category";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->execute();
@@ -57,7 +57,7 @@ trait MethodTrait{
     }
 
     public function getMethodByPayment($transaction_ID){
-        $sql = "SELECT * FROM Payment_Transaction pt
+        $sql = "SELECT * FROM payment_transaction pt
                 JOIN method m ON m.method_ID = pt.method_ID 
                 WHERE pt.transaction_ID = :transaction_ID";
         $db = $this->connect();

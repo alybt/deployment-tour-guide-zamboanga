@@ -45,7 +45,7 @@ class Booking extends Database{
         JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
         JOIN guide g ON tp.guide_ID = g.guide_ID
         JOIN account_info ai ON g.account_ID = ai.account_ID
-        JOIN User_Login ul ON ai.user_ID = ul.user_ID  
+        JOIN user_login ul ON ai.user_ID = ul.user_ID  
         JOIN tour_package_spots tps ON tp.tourpackage_ID = tp.tourpackage_ID
         JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID    
         WHERE b.tourist_ID = :tourist_ID
@@ -187,7 +187,7 @@ class Booking extends Database{
 
         try {
             // Step 1: Check current booking status
-            $checkSql = "SELECT booking_status FROM Booking WHERE booking_ID = :booking_ID";
+            $checkSql = "SELECT booking_status FROM booking WHERE booking_ID = :booking_ID";
             $checkStmt = $db->prepare($checkSql);
             $checkStmt->bindParam(':booking_ID', $booking_ID, PDO::PARAM_INT);
             $checkStmt->execute();
@@ -204,7 +204,7 @@ class Booking extends Database{
             }
 
             // Step 3: Atomic update with status check
-            $updateSql = "UPDATE Booking 
+            $updateSql = "UPDATE booking 
                         SET booking_status = 'Cancelled' 
                         WHERE booking_ID = :booking_ID 
                             AND booking_status = 'Pending for Payment'";
@@ -232,7 +232,7 @@ class Booking extends Database{
         $sql = "SELECT 
                 booking_start_date AS booking_start,
                 booking_end_date AS booking_end 
-                FROM Booking WHERE booking_ID = :booking_ID";
+                FROM booking WHERE booking_ID = :booking_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(":booking_ID", $old_bookingID);
@@ -253,7 +253,7 @@ class Booking extends Database{
                 tourpackage_ID,
                 booking_start_date,
                 booking_end_date 
-                FROM Booking WHERE booking_ID = :booking_ID";
+                FROM booking WHERE booking_ID = :booking_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(":booking_ID", $old_bookingID);
@@ -314,7 +314,7 @@ class Booking extends Database{
             JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID 
             JOIN account_info ai ON b.tourist_ID = ai.account_ID 
             JOIN user_login ul ON ai.user_ID = ul.user_ID  
-            JOIN Guide g ON tp.guide_ID = g.guide_ID
+            JOIN guide g ON tp.guide_ID = g.guide_ID
             JOIN account_info ai_g ON g.account_ID = ai_g.account_ID
             JOIN user_login ul_g ON ai_g.user_ID = ul_g.user_ID
             JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID 
@@ -365,7 +365,7 @@ class Booking extends Database{
                 return false;
             }
 
-            $sql = "UPDATE Payment_Transaction pt
+            $sql = "UPDATE payment_transaction pt
                     SET pt.transaction_status = 'No Refund'
                     WHERE pt.booking_ID = :booking_ID";
             $query = $db->prepare($sql);
@@ -412,9 +412,9 @@ class Booking extends Database{
         $sql = "SELECT 
                 C.companion_name,
                 C.companion_category
-            FROM Booking AS B
-            JOIN Booking_Bundle AS BB ON B.booking_ID = BB.booking_ID
-            JOIN Companion AS C ON BB.companion_ID = C.companion_ID
+            FROM booking AS B
+            JOIN booking_bundle AS BB ON B.booking_ID = BB.booking_ID
+            JOIN companion AS C ON BB.companion_ID = C.companion_ID
             WHERE B.booking_ID = :booking_ID
             ORDER BY C.companion_ID";
         $db = $this->connect();
@@ -456,7 +456,7 @@ class Booking extends Database{
     // GUIDE
     public function updateBookingStatus_Approved($booking_ID) {
         try {
-            $sql = "UPDATE Booking 
+            $sql = "UPDATE booking 
                     SET booking_status = 'Approved' 
                     WHERE booking_ID = :booking_ID";
 
@@ -489,7 +489,7 @@ class Booking extends Database{
 
     public function updateBookingStatus_Complete($booking_ID) {
         try {
-            $sql = "UPDATE Booking 
+            $sql = "UPDATE booking 
                     SET booking_status = 'Completed' 
                     WHERE booking_ID = :booking_ID";
 

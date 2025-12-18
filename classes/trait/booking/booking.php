@@ -97,25 +97,25 @@ trait BookingDetails{
         pt.transaction_reference,
         pt.transaction_created_date
         
-        FROM Booking b
+        FROM booking b
         
         -- Tourist Info
-        JOIN Account_Info ai ON b.tourist_ID = ai.account_ID
-        JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-        LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+        JOIN account_info ai ON b.tourist_ID = ai.account_ID
+        JOIN user_login ul ON ai.user_ID = ul.user_ID 
+        LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
         
         -- Tour Package Info
-        JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID 
+        JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID 
         
         -- Guide Info
-        LEFT JOIN Guide g ON tp.guide_ID = g.guide_ID
-        LEFT JOIN Account_Info gai ON g.account_ID = gai.account_ID
-        LEFT JOIN User_Login gul ON gai.user_ID = gul.user_ID 
-        LEFT JOIN Contact_Info gci ON gul.contactinfo_ID = gci.contactinfo_ID
-        LEFT JOIN Phone_Number gpn ON gci.phone_ID = gpn.phone_ID
+        LEFT JOIN guide g ON tp.guide_ID = g.guide_ID
+        LEFT JOIN account_info gai ON g.account_ID = gai.account_ID
+        LEFT JOIN user_login gul ON gai.user_ID = gul.user_ID 
+        LEFT JOIN contact_info gci ON gul.contactinfo_ID = gci.contactinfo_ID
+        LEFT JOIN phone_number gpn ON gci.phone_ID = gpn.phone_ID
         
         -- Transaction Info
-        LEFT JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+        LEFT JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
         
         WHERE b.booking_ID = :booking_ID";
         
@@ -131,8 +131,8 @@ trait BookingDetails{
         c.companion_name,
         c.companion_age,
         c.companion_category
-        FROM Booking_Bundle bb
-        JOIN Companion c ON bb.companion_ID = c.companion_ID
+        FROM booking_bundle bb
+        JOIN companion c ON bb.companion_ID = c.companion_ID
         WHERE bb.booking_ID = :booking_ID
         ORDER BY c.companion_name";
   
@@ -148,7 +148,7 @@ trait BookingDetails{
         pt.transaction_total_amount AS total_amount,
         pt.transaction_created_date AS payment_date,
         pt.transaction_status    AS transaction_status
-                    FROM Payment_Transaction pt
+                    FROM payment_transaction pt
                     WHERE pt.booking_ID = :booking_id
                     ORDER BY pt.transaction_created_date DESC
                     LIMIT 1
@@ -366,9 +366,9 @@ trait BookingDetails{
     public function getGuideAccountIDByBookingID(int $booking_ID): ?int {
         $sql = "
             SELECT g.account_ID
-            FROM Booking b
-            INNER JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
-            INNER JOIN Guide g ON tp.guide_ID = g.guide_ID
+            FROM booking b
+            INNER JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            INNER JOIN guide g ON tp.guide_ID = g.guide_ID
             WHERE b.booking_ID = :booking_ID
             LIMIT 1
         ";
@@ -457,13 +457,13 @@ trait BookingDetails{
                 tps.packagespot_activityname AS activity_name,
                 ts.spots_name AS spot_name
             FROM 
-                Booking b
+                booking b
             JOIN 
-                Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
+                tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
             JOIN 
-                Tour_Package_Spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
+                tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
             LEFT JOIN 
-                Tour_Spots ts ON tps.spots_ID = ts.spots_ID
+                tour_spots ts ON tps.spots_ID = ts.spots_ID
             WHERE 
                 b.booking_ID = :booking_ID
             ORDER BY 
@@ -500,9 +500,9 @@ trait BookingDetails{
                 mp.meeting_address,
                 mp.meeting_googlelink
             FROM 
-                Booking b
+                booking b
             LEFT JOIN 
-                Meeting_Point mp ON b.booking_meeting_ID = mp.meeting_ID
+                meeting_point mp ON b.booking_meeting_ID = mp.meeting_ID
             WHERE 
                 b.booking_ID = :booking_ID";
 
@@ -541,25 +541,25 @@ trait BookingDetails{
                     mp.meeting_address,
                     mp.meeting_googlelink
 
-                FROM Booking b
+                FROM booking b
 
-                JOIN Tour_Package tp 
+                JOIN tour_package tp 
                     ON b.tourpackage_ID = tp.tourpackage_ID
 
-                LEFT JOIN Tour_Package_Spots tps
+                LEFT JOIN tour_package_spots tps
                     ON tp.tourpackage_ID = tps.tourpackage_ID
                 AND tps.packagespot_day = 1
 
-                LEFT JOIN Guide g 
+                LEFT JOIN guide g 
                     ON tp.guide_ID = g.guide_ID
 
-                LEFT JOIN Guide_Languages gl 
+                LEFT JOIN guide_languages gl 
                     ON g.guide_ID = gl.guide_ID
 
-                LEFT JOIN Languages l 
+                LEFT JOIN languages l 
                     ON gl.languages_ID = l.languages_ID
 
-                LEFT JOIN Meeting_Point mp 
+                LEFT JOIN meeting_point mp 
                     ON b.booking_meeting_ID = mp.meeting_ID
 
                 WHERE b.booking_ID = :booking_ID
@@ -593,15 +593,15 @@ trait BookingDetails{
                     TRX.transaction_reference AS Transaction_Reference,
                     TRX.transaction_created_date AS Transaction_Date
                 FROM 
-                    Booking B
+                    booking B
                 JOIN 
-                    Tour_Package TP ON B.tourpackage_ID = TP.tourpackage_ID
+                    tour_package TP ON B.tourpackage_ID = TP.tourpackage_ID
                 JOIN 
-                    Payment_Transaction TRX ON B.booking_ID = TRX.booking_ID
+                    payment_transaction TRX ON B.booking_ID = TRX.booking_ID
                 JOIN 
-                    Method M ON TRX.method_ID = M.method_ID
+                    method M ON TRX.method_ID = M.method_ID
                 JOIN 
-                    Method_Category MC ON M.methodcategory_ID = MC.methodcategory_ID
+                    method_category MC ON M.methodcategory_ID = MC.methodcategory_ID
                 WHERE 
                     B.booking_ID = :booking_ID";
         try {
@@ -626,9 +626,9 @@ trait BookingDetails{
                 b.*,
                 tp.tourpackage_name,
                 b.tourist_ID AS tourist_account_ID
-            FROM Booking b
-            LEFT JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
-            LEFT JOIN Account_Info acc ON b.tourist_ID = acc.account_ID
+            FROM booking b
+            LEFT JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            LEFT JOIN account_info acc ON b.tourist_ID = acc.account_ID
             WHERE tp.guide_ID = 1
             AND b.booking_status IN ('Pending for Payment','Pending for Approval','Approved')
             ORDER BY b.booking_created_at DESC";
@@ -650,10 +650,10 @@ trait BookingDetails{
                 b.*,
                 tp.tourPackage_name,
                 CONCAT(ul.name_first, ' ', ul.name_last) as tourist_name
-            FROM Booking b
-            LEFT JOIN TourPackage tp ON b.tourPackage_ID = tp.tourPackage_ID
-            LEFT JOIN Account_Info acc ON b.tourist_ID = acc.account_ID
-            LEFT JOIN User_Login ul ON acc.user_ID = ul.user_ID  
+            FROM booking b
+            LEFT JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            LEFT JOIN account_info acc ON b.tourist_ID = acc.account_ID
+            LEFT JOIN user_login ul ON acc.user_ID = ul.user_ID  
             WHERE b.guide_ID = ? 
             AND DATE(b.booking_startDate) = ?
             AND b.booking_status IN ('Confirmed', 'In Progress')
@@ -671,7 +671,7 @@ trait BookingDetails{
     public function getCompletedBookingsCount(int $guide_ID): int {
         try {
             $sql = "SELECT COUNT(*) as count 
-                    FROM Booking 
+                    FROM booking 
                     WHERE guide_ID = ? AND booking_status = 'Completed'";
             
             $stmt = $this->conn->prepare($sql);

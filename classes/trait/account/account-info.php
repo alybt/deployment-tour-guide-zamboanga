@@ -14,10 +14,10 @@ trait AccountInfoTrait {
             acc.account_aboutme,
             acc.account_bio,
             acc.account_nickname
-        FROM Account_Info acc
-        JOIN User_Login ul ON acc.user_ID = ul.user_ID  
-        LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
-        LEFT JOIN Phone_Number pn ON ci.phone_ID = pn.phone_ID
+        FROM account_info acc
+        JOIN user_login ul ON acc.user_ID = ul.user_ID  
+        LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+        LEFT JOIN phone_number pn ON ci.phone_ID = pn.phone_ID
         WHERE acc.account_ID = :account_ID"; 
         $db = $this->connect();
         $query = $db->prepare($sql);
@@ -35,9 +35,9 @@ trait AccountInfoTrait {
                 ul.user_ID, 
                 ul.contactinfo_ID,
                 ci.phone_ID
-            FROM Account_Info acc
-            JOIN User_Login ul ON acc.user_ID = ul.user_ID 
-            LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+            FROM account_info acc
+            JOIN user_login ul ON acc.user_ID = ul.user_ID 
+            LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
             WHERE acc.account_ID = ?";
             
             $stmt = $this->conn->prepare($sql);
@@ -49,7 +49,7 @@ trait AccountInfoTrait {
             }
 
             $stmt = $this->conn->prepare("
-                UPDATE User_Login 
+                UPDATE user_login 
                 SET name_first = ?, 
                     name_second = ?, 
                     name_middle = ?, 
@@ -68,7 +68,7 @@ trait AccountInfoTrait {
             // Update Contact_Info email
             if (!empty($ids['contactinfo_ID'])) {
                 $stmt = $this->conn->prepare("
-                    UPDATE Contact_Info 
+                    UPDATE contact_info 
                     SET contactinfo_email = ?
                     WHERE contactinfo_ID = ?
                 ");
@@ -80,7 +80,7 @@ trait AccountInfoTrait {
                 // Update Phone_Number
                 if (!empty($ids['phone_ID'])) {
                     $stmt = $this->conn->prepare("
-                        UPDATE Phone_Number 
+                        UPDATE phone_number 
                         SET phone_number = ?
                         WHERE phone_ID = ?
                     ");
@@ -91,9 +91,9 @@ trait AccountInfoTrait {
                 }
             }
 
-            // Update Account_Info
+            // Update account_info
             $stmt = $this->conn->prepare("
-                UPDATE Account_Info 
+                UPDATE account_info 
                 SET account_aboutme = ?,
                     account_bio = ?,
                     account_nickname = ?
@@ -126,8 +126,8 @@ trait AccountInfoTrait {
             $sql = "SELECT 
                 ul.username,
                 ul.user_last_password_change as last_password_change
-            FROM Account_Info acc
-            JOIN User_Login ul ON acc.user_ID = ul.user_ID
+            FROM account_info acc
+            JOIN user_login ul ON acc.user_ID = ul.user_ID
             WHERE acc.account_ID = ?";
             
             $stmt = $this->conn->prepare($sql);
@@ -151,8 +151,8 @@ trait AccountInfoTrait {
         try {
             // Get user_ID and current credentials
             $sql = "SELECT ul.user_ID, ul.username, ul.password
-            FROM Account_Info acc
-            JOIN User_Login ul ON acc.user_ID = ul.user_ID
+            FROM account_info acc
+            JOIN user_login ul ON acc.user_ID = ul.user_ID
             WHERE acc.account_ID = ?";
             
             $stmt = $this->conn->prepare($sql);
@@ -190,7 +190,7 @@ trait AccountInfoTrait {
                 }
                 
                 // Check if username already exists
-                $stmt = $this->conn->prepare("SELECT user_ID FROM User_Login WHERE username = ? AND user_ID != ?");
+                $stmt = $this->conn->prepare("SELECT user_ID FROM user_login WHERE username = ? AND user_ID != ?");
                 $stmt->execute([$new_username, $user['user_ID']]);
                 if ($stmt->fetch()) {
                     return ['success' => false, 'message' => 'Username already taken'];
@@ -221,7 +221,7 @@ trait AccountInfoTrait {
             
             $params[] = $user['user_ID'];
             
-            $sql = "UPDATE User_Login SET " . implode(", ", $updates) . " WHERE user_ID = ?";
+            $sql = "UPDATE user_login SET " . implode(", ", $updates) . " WHERE user_ID = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($params);
             
@@ -249,8 +249,8 @@ trait AccountInfoTrait {
                 al.activity_description,
                 al.activity_timestamp,
                 a.action_name
-            FROM Activity_Log al
-            LEFT JOIN Action a ON al.action_ID = a.action_ID
+            FROM activity_log al
+            LEFT JOIN action a ON al.action_ID = a.action_ID
             WHERE al.account_ID = ?
             ORDER BY al.activity_timestamp DESC
             LIMIT ?";
@@ -267,7 +267,7 @@ trait AccountInfoTrait {
     public function logActivity(int $account_ID, int $action_ID, string $description): bool {
         try {
             $stmt = $this->conn->prepare("
-                INSERT INTO Activity_Log (account_ID, action_ID, activity_description) 
+                INSERT INTO activity_log (account_ID, action_ID, activity_description) 
                 VALUES (?, ?, ?)
             ");
             return $stmt->execute([$account_ID, $action_ID, $description]);

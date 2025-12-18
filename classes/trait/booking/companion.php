@@ -36,8 +36,8 @@ trait CompanionTrait{
 
     public function getCompanionsByBooking($booking_ID) {
         $sql = "SELECT c.companion_name, c.companion_category, c.companion_age
-                FROM Booking_Bundle b
-                JOIN Companion c ON b.companion_ID = c.companion_ID 
+                FROM booking_bundle b
+                JOIN companion c ON b.companion_ID = c.companion_ID 
                 WHERE b.booking_ID = :id";
         $db = $this->connect();
         $stmt = $db->prepare($sql);

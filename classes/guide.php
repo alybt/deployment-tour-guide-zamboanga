@@ -8,7 +8,7 @@ require_once "trait/tour/tour-packagespots.php";
 // schedule, pricing, and people tables are flattened into Tour_Package
 
 
-class Guide extends Database {
+class guide extends Database {
     use AccountLoginTrait;
     use TourPackagesTrait;
     use TourSpotsTrait;
@@ -25,9 +25,9 @@ class Guide extends Database {
                         ul.name_last,
                         IF(ul.name_suffix IS NOT NULL AND ul.name_suffix != '', CONCAT(' ', ul.name_suffix), '')
                     ) AS guide_name
-                FROM Guide g
-                JOIN Account_Info ai ON g.account_ID = ai.account_ID
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID
+                FROM guide g
+                JOIN account_info ai ON g.account_ID = ai.account_ID
+                JOIN user_login ul ON ai.user_ID = ul.user_ID
                 
                 
                 ORDER BY ul.name_last, ul.name_first";
@@ -54,11 +54,11 @@ class Guide extends Database {
                     ci.contactinfo_email AS guide_email,
                     gl.license_number AS guide_license,
                     ai.*
-                FROM Guide g
+                FROM guide g
                 JOIN guide_license gl ON g.license_ID = gl.license_ID
-                JOIN Account_Info ai ON g.account_ID = ai.account_ID
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-                LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
+                JOIN account_info ai ON g.account_ID = ai.account_ID
+                JOIN user_login ul ON ai.user_ID = ul.user_ID 
+                LEFT JOIN contact_info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
                 ORDER BY ul.name_last, ul.name_first";
         $db = $this->connect();
         $query = $db->prepare($sql);
@@ -72,7 +72,7 @@ class Guide extends Database {
 
 
     public function viewPackageByGuideID($guide_ID){
-        $sql = "SELECT * FROM Tour_Package WHERE guide_ID = :guide_ID";
+        $sql = "SELECT * FROM tour_package WHERE guide_ID = :guide_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(':guide_ID', $guide_ID);
@@ -84,7 +84,7 @@ class Guide extends Database {
     }
 
     public function getGuide_ID($account_ID){
-        $sql = "SELECT g.guide_ID FROM Guide AS g WHERE g.account_ID = :account_ID";
+        $sql = "SELECT g.guide_ID FROM guide AS g WHERE g.account_ID = :account_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(":account_ID", $account_ID);
@@ -96,7 +96,7 @@ class Guide extends Database {
 
     public function getScheduleByID($scheduleID) {
         $db = $this->connect();
-        $sql = "SELECT * FROM Schedule WHERE schedule_ID = :scheduleID";
+        $sql = "SELECT * FROM schedule WHERE schedule_ID = :scheduleID";
         $query = $db->prepare($sql);
         $query->bindParam(':scheduleID', $scheduleID);
         $query->execute();
@@ -105,7 +105,7 @@ class Guide extends Database {
 
     public function getPricingByID($pricingID) {
         $db = $this->connect();
-        $sql = "SELECT * FROM Pricing WHERE pricing_ID = :pricingID";
+        $sql = "SELECT * FROM pricing WHERE pricing_ID = :pricingID";
         $query = $db->prepare($sql);
         $query->bindParam(':pricingID', $pricingID);
         $query->execute();
@@ -114,7 +114,7 @@ class Guide extends Database {
 
     public function getPeopleByID($peopleID) {
         $db = $this->connect();
-        $sql = "SELECT * FROM Number_Of_People WHERE numberofpeople_ID = :peopleID";
+        $sql = "SELECT * FROM number_of_people WHERE numberofpeople_ID = :peopleID";
         $query = $db->prepare($sql);
         $query->bindParam(':peopleID', $peopleID);
         $query->execute();
@@ -123,8 +123,8 @@ class Guide extends Database {
 
     public function getSpotsByPackage($packageID) {
         $sql = "SELECT ts.* 
-                FROM Tour_Package_Spots tps
-                JOIN Tour_Spots ts ON tps.spots_ID = ts.spots_ID
+                FROM tour_package_spots tps
+                JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID
                 WHERE tps.tourpackage_ID = ?";
         $query = $this->conn->prepare($sql);
         $query->execute([$packageID]);
@@ -145,7 +145,7 @@ class Guide extends Database {
             }
 
             // Update tour package (flattened)
-            $sql = "UPDATE Tour_Package SET 
+            $sql = "UPDATE tour_package SET 
                     guide_ID = :guide_ID,
                     tourpackage_name = :tourpackage_name,
                     tourpackage_desc = :tourpackage_desc,
@@ -174,7 +174,7 @@ class Guide extends Database {
             }
 
             // Delete existing spots
-            $sql = "DELETE FROM Tour_Package_Spots WHERE tourpackage_ID = :tourpackage_ID";
+            $sql = "DELETE FROM tour_package_spots WHERE tourpackage_ID = :tourpackage_ID";
             $query = $db->prepare($sql);
             $query->bindParam(':tourpackage_ID', $tourpackage_ID);
             $query->execute();
@@ -182,7 +182,7 @@ class Guide extends Database {
             // Add new spots
             if (!empty($spots)) {
                 foreach ($spots as $spot_ID) {
-                    $sql = "INSERT INTO Tour_Package_Spots (tourpackage_ID, spots_ID) VALUES (:tourpackage_ID, :spots_ID)";
+                    $sql = "INSERT INTO tour_package_spots (tourpackage_ID, spots_ID) VALUES (:tourpackage_ID, :spots_ID)";
                     $query = $db->prepare($sql);
                     $query->bindParam(':tourpackage_ID', $tourpackage_ID);
                     $query->bindParam(':spots_ID', $spot_ID);
@@ -205,7 +205,7 @@ class Guide extends Database {
         try {
             // Get tour package information
             $sql = "SELECT tp.*
-                    FROM Tour_Package tp
+                    FROM tour_package tp
                     WHERE tp.tourpackage_ID = :tourpackage_ID";
             
             $query = $db->prepare($sql);
@@ -218,7 +218,7 @@ class Guide extends Database {
             }
 
             // Get associated spots
-            $sql = "SELECT spots_ID FROM Tour_Package_Spots WHERE tourpackage_ID = :tourpackage_ID";
+            $sql = "SELECT spots_ID FROM tour_package_spots WHERE tourpackage_ID = :tourpackage_ID";
             $query = $db->prepare($sql);
             $query->bindParam(':tourpackage_ID', $tourpackage_ID);
             $query->execute();
@@ -243,9 +243,9 @@ class Guide extends Database {
     public function addgetSchedule($schedule_days, $numberofpeople_maximum, $numberofpeople_based, $currency, $basedAmount, $discount, $db){
         // First check if a matching schedule exists
         $sql = "SELECT s.schedule_ID
-                FROM Schedule s
-                JOIN Number_Of_People nop ON s.numberofpeople_ID = nop.numberofpeople_ID
-                JOIN Pricing p ON nop.pricing_ID = ul.pricing_ID
+                FROM schedule s
+                JOIN number_of_people nop ON s.numberofpeople_ID = nop.numberofpeople_ID
+                JOIN pricing p ON nop.pricing_ID = ul.pricing_ID
                 WHERE 
                     s.schedule_days = :schedule_days
                     AND nop.numberofpeople_maximum = :max
@@ -274,7 +274,7 @@ class Guide extends Database {
             return false;
         }
 
-        $sql = "INSERT INTO Schedule(numberofpeople_ID, schedule_days) VALUES (:numberofpeople_ID, :schedule_days)";
+        $sql = "INSERT INTO schedule(numberofpeople_ID, schedule_days) VALUES (:numberofpeople_ID, :schedule_days)";
         $query = $db->prepare($sql);
         $query->bindParam(':numberofpeople_ID', $numberofpeople_ID);
         $query->bindParam(':schedule_days', $schedule_days);
@@ -288,7 +288,7 @@ class Guide extends Database {
 
     
     public function addgetTouristByUserID($user_ID){
-        $sql = "SELECT account_ID FROM Account_Info WHERE user_ID = :user_ID AND role_ID = 3";
+        $sql = "SELECT account_ID FROM account_info WHERE user_ID = :user_ID AND role_ID = 3";
         $db = $this->connect();
         $query_select = $db->prepare($sql);
         $query_select->bindParam(':user_ID', $user_ID);
@@ -299,7 +299,7 @@ class Guide extends Database {
             return $result["account_ID"];
         }
 
-        $sql = "INSERT INTO Account_Info(user_ID, role_ID) VALUES (:user_ID, 3)";
+        $sql = "INSERT INTO account_info(user_ID, role_ID) VALUES (:user_ID, 3)";
         $query_insert = $db->prepare($sql);
         $query_insert->bindParam(':user_ID', $user_ID);
 
@@ -314,7 +314,7 @@ class Guide extends Database {
         $db = $this->connect();
         $db->beginTransaction();
         try {
-            $sql = "SELECT account_ID FROM Account_Info WHERE user_ID = :user_ID AND role_ID = 3";
+            $sql = "SELECT account_ID FROM account_info WHERE user_ID = :user_ID AND role_ID = 3";
             $qs = $db->prepare($sql);
             $qs->bindParam(':user_ID', $user_ID);
             $qs->execute();
@@ -323,7 +323,7 @@ class Guide extends Database {
                 $db->commit();
                 return (int)$existing['account_ID'];
             }
-            $sql = "INSERT INTO Account_Info(user_ID, role_ID, account_status) VALUES (:user_ID, 3, 'Active')";
+            $sql = "INSERT INTO account_info(user_ID, role_ID, account_status) VALUES (:user_ID, 3, 'Active')";
             $qi = $db->prepare($sql);
             $qi->bindParam(':user_ID', $user_ID);
             if (!$qi->execute()) {
@@ -343,7 +343,7 @@ class Guide extends Database {
     public function getTotalEarnings($guide_ID) {
         $sql = "SELECT COALESCE(SUM(pt.transaction_total_amount), 0) AS total_earnings
             FROM booking b
-            JOIN Payment_Transaction pt ON pt.booking_ID = b.booking_ID
+            JOIN payment_transaction pt ON pt.booking_ID = b.booking_ID
             JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
             WHERE tp.guide_ID = :guide_ID
             AND b.booking_status IN ('Completed')
@@ -376,7 +376,7 @@ class Guide extends Database {
     // classes/guide.php
     public function getGuideByID(int $guide_ID): ?array {
         $sql = " SELECT 
-                -- Guide & Account
+                -- guide & Account
                 g.guide_ID,
                 ai.*,
                 a.account_profilepic AS profile_pic
@@ -424,19 +424,19 @@ class Guide extends Database {
                 ) AS guide_address
                 
             FROM guide g
-            JOIN Account_Info ai ON ai.account_ID = g.account_ID
-            JOIN User_Login ul ON ul.user_ID = ai.user_ID 
-            LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID
+            JOIN account_info ai ON ai.account_ID = g.account_ID
+            JOIN user_login ul ON ul.user_ID = ai.user_ID 
+            LEFT JOIN contact_info ci ON ci.contactinfo_ID = ul.contactinfo_ID
             
             -- Primary Phone (assume one primary or get the first)
-            LEFT JOIN Phone_Number pn ON pn.phone_ID = ci.phone_ID
-            LEFT JOIN Country c ON c.country_ID = pn.country_ID
+            LEFT JOIN phone_number pn ON pn.phone_ID = ci.phone_ID
+            LEFT JOIN country c ON c.country_ID = pn.country_ID
             
             -- Address 
-            LEFT JOIN Barangay b ON b.barangay_ID = ci.barangay_ID
-            LEFT JOIN City city ON city.city_ID = b.city_ID
-            LEFT JOIN Province prov ON prov.province_ID = city.province_ID
-            LEFT JOIN Region reg ON reg.region_ID = prov.region_ID
+            LEFT JOIN barangay b ON b.barangay_ID = ci.barangay_ID
+            LEFT JOIN city ON city.city_ID = b.city_ID
+            LEFT JOIN province prov ON prov.province_ID = city.province_ID
+            LEFT JOIN region reg ON reg.region_ID = prov.region_ID
             
             WHERE g.guide_ID = :guide_ID
             LIMIT 1
@@ -457,7 +457,7 @@ class Guide extends Database {
 
     public function getGuideByBooking($booking_ID){
         $sql = "SELECT 
-                -- Guide & Account
+                -- guide & Account
                 g.guide_ID,
                 g.account_ID,
                 
@@ -475,9 +475,9 @@ class Guide extends Database {
             FROM booking b
             JOIN tour_package tp ON tp.tourpackage_ID = b.tourpackage_ID
             LEFT JOIN guide g ON g.guide_ID = tp.guide_ID  -- Changed to LEFT JOIN
-            LEFT JOIN Account_Info ai ON ai.account_ID = g.account_ID
-            LEFT JOIN User_Login ul ON ul.user_ID = ai.user_ID 
-            LEFT JOIN Contact_Info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
+            LEFT JOIN account_info ai ON ai.account_ID = g.account_ID
+            LEFT JOIN user_login ul ON ul.user_ID = ai.user_ID 
+            LEFT JOIN contact_info ci ON ci.contactinfo_ID = ul.contactinfo_ID 
             WHERE b.booking_ID = :booking_ID
             LIMIT 1
         ";
@@ -513,15 +513,15 @@ class Guide extends Database {
                 ai.*,
                 g.guide_ID, 
                 GROUP_CONCAT(l.languages_name ORDER BY l.languages_name SEPARATOR ', ') AS guide_languages 
-            FROM Guide g 
-            JOIN Guide_License gl ON g.license_ID = gl.license_ID 
-            JOIN Account_Info ai ON g.account_ID = ai.account_ID 
-            JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+            FROM guide g 
+            JOIN guide_license gl ON g.license_ID = gl.license_ID 
+            JOIN account_info ai ON g.account_ID = ai.account_ID 
+            JOIN user_login ul ON ai.user_ID = ul.user_ID 
             
-            LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
+            LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
             
-            LEFT JOIN Guide_Languages glang ON g.guide_ID = glang.guide_ID 
-            LEFT JOIN Languages l ON glang.languages_ID = l.languages_ID 
+            LEFT JOIN guide_languages glang ON g.guide_ID = glang.guide_ID 
+            LEFT JOIN languages l ON glang.languages_ID = l.languages_ID 
             GROUP BY 
                 g.guide_ID,
                 gl.license_ID,
@@ -553,7 +553,7 @@ class Guide extends Database {
                 AVG(r.rating_value) AS average_rating,
                 COUNT(r.rating_ID) AS rating_count
             FROM 
-                Rating r
+                rating r
             WHERE 
                 r.rating_account_ID = :account_ID";
         try {
@@ -576,15 +576,15 @@ class Guide extends Database {
                      CONCAT(ul.name_first, ' ', ul.name_last) AS Full_Name,
                      GROUP_CONCAT(L.languages_name SEPARATOR ', ') AS Spoken_Languages
                 FROM
-                    Guide G
+                    guide G
                 JOIN
-                    Account_Info AI ON G.account_ID = AI.account_ID
+                    account_info AI ON G.account_ID = AI.account_ID
                 JOIN
-                    User_Login UL ON AI.user_ID = UL.user_ID 
+                    user_login UL ON AI.user_ID = UL.user_ID 
                 LEFT JOIN
-                    Guide_Languages GL ON G.guide_ID = GL.guide_ID
+                    guide_languages GL ON G.guide_ID = GL.guide_ID
                 LEFT JOIN
-                    Languages L ON GL.languages_ID = L.languages_ID 
+                    languages L ON GL.languages_ID = L.languages_ID 
                 WHERE G.guide_ID = :guide_ID";
         try {
             $db = $this->connect();
@@ -615,15 +615,15 @@ class Guide extends Database {
                 ai.*,
                 g.guide_ID, 
                 GROUP_CONCAT(l.languages_name ORDER BY l.languages_name SEPARATOR ', ') AS guide_languages 
-            FROM Guide g 
-            JOIN Guide_License gl ON g.license_ID = gl.license_ID 
-            JOIN Account_Info ai ON g.account_ID = ai.account_ID 
-            JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+            FROM guide g 
+            JOIN guide_license gl ON g.license_ID = gl.license_ID 
+            JOIN account_info ai ON g.account_ID = ai.account_ID 
+            JOIN user_login ul ON ai.user_ID = ul.user_ID 
             
-            LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
+            LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID 
             
-            LEFT JOIN Guide_Languages glang ON g.guide_ID = glang.guide_ID 
-            LEFT JOIN Languages l ON glang.languages_ID = l.languages_ID 
+            LEFT JOIN guide_languages glang ON g.guide_ID = glang.guide_ID 
+            LEFT JOIN languages l ON glang.languages_ID = l.languages_ID 
             GROUP BY 
                 g.guide_ID,
                 gl.license_ID,
@@ -651,7 +651,7 @@ class Guide extends Database {
     }
 
     public function getGuideAccountID($guide_ID){
-        $sql = "SELECT account_ID FROM Guide
+        $sql = "SELECT account_ID FROM guide
         WHERE guide_ID = :guide_ID";
         
         $db = $this->connect();
@@ -662,7 +662,7 @@ class Guide extends Database {
     }
 
     public function getGuideDetails($guide_ID){
-        $sql = "SELECT g.* FROM Guide g
+        $sql = "SELECT g.* FROM guide g
         WHERE g.guide_ID = :guide_ID";
         
         $db = $this->connect();
@@ -673,7 +673,7 @@ class Guide extends Database {
     }
 
     public function getGuideBalanace($guide_ID){
-        $sql = "SELECT guide_balance FROM Guide 
+        $sql = "SELECT guide_balance FROM guide 
         WHERE guide_ID = :guide_ID";
         
         $db = $this->connect();
@@ -700,8 +700,8 @@ class Guide extends Database {
 
     public function getuserIDByGuide($guide_ID){
         $sql = "SELECT ul.user_ID FROM guide g
-            JOIN Account_Info ai ON g.account_ID = ai.account_ID
-            JOIN User_Login ul ON ai.user_ID = ul.user_ID
+            JOIN account_info ai ON g.account_ID = ai.account_ID
+            JOIN user_login ul ON ai.user_ID = ul.user_ID
             WHERE g.guide_ID = :guide_ID";
         
         $db = $this->connect();

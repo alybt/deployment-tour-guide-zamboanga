@@ -3,7 +3,7 @@
 trait UserTrait {
     
     public function checkUsernameExists($user_username, $db) {
-        $sql = "SELECT COUNT(*) AS total FROM User_Login WHERE user_username = :user_username";
+        $sql = "SELECT COUNT(*) AS total FROM user_login WHERE user_username = :user_username";
         $query = $db->prepare($sql);
         $query->bindParam(":user_username", $user_username);
         
@@ -26,7 +26,7 @@ trait UserTrait {
             return false;
         }
 
-        // First, create Contact_Info with address and emergency data
+        // First, create contact_info with address and emergency data
         $contactinfo_ID = $this->addContactInfo(
             $houseno, $street, $barangay,
             $country_ID, $phone_number,
@@ -40,8 +40,8 @@ trait UserTrait {
             return false;
         }
 
-        // Now insert into User_Login with all denormalized data
-        $sql = "INSERT INTO User_Login (
+        // Now insert into user_login with all denormalized data
+        $sql = "INSERT INTO user_login (
                     name_first, name_second, name_middle, name_last, name_suffix,
                     contactinfo_ID,
                     person_isPWD, person_Nationality, person_Gender, person_DateOfBirth,
@@ -70,7 +70,7 @@ trait UserTrait {
             return $db->lastInsertId();
         }
 
-        $this->setLastError("User_Login insert failed: " . implode(" ", $stmt->errorInfo()));
+        $this->setLastError("user_login insert failed: " . implode(" ", $stmt->errorInfo()));
         return false;
     }
 
@@ -92,8 +92,8 @@ trait UserTrait {
             return false;
         }
 
-        // Insert Contact_Info with all denormalized data
-        $sql = "INSERT INTO Contact_Info (
+        // Insert contact_info with all denormalized data
+        $sql = "INSERT INTO contact_info (
                     contactinfo_email, address_houseno, address_street, barangay_ID,
                     phone_ID, emergency_name, emergency_relationship, emergency_phone_ID
                 ) VALUES (
@@ -115,12 +115,12 @@ trait UserTrait {
             return $db->lastInsertId();
         }
 
-        $this->setLastError("Contact_Info insert failed: " . implode(" ", $stmt->errorInfo()));
+        $this->setLastError("contact_info insert failed: " . implode(" ", $stmt->errorInfo()));
         return false;
     }
 
     private function addPhoneNumber($phone_number, $country_ID, $db) {
-        $sql = "INSERT INTO Phone_Number (phone_number, country_ID) VALUES (:phone_number, :country_ID)";
+        $sql = "INSERT INTO contact_info (phone_number, country_ID) VALUES (:phone_number, :country_ID)";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(":phone_number", $phone_number);
         $stmt->bindParam(":country_ID", $country_ID, PDO::PARAM_INT);
@@ -129,7 +129,7 @@ trait UserTrait {
             return $db->lastInsertId();
         }
 
-        $this->setLastError("Phone_Number insert failed: " . implode(" ", $stmt->errorInfo()));
+        $this->setLastError("contact_info insert failed: " . implode(" ", $stmt->errorInfo()));
         return false;
     }
 

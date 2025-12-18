@@ -15,8 +15,8 @@ class Tourist extends Database {
 
     public function getTouristBirthdateByTouristID($tourist_ID) {
         $sql  = "SELECT ul.person_DateOfBirth
-                 FROM Account_Info ai
-                 JOIN User_Login ul ON ul.user_ID = ai.user_ID 
+                 FROM account_info ai
+                 JOIN user_login ul ON ul.user_ID = ai.user_ID 
                  WHERE ai.account_ID = :tourist_ID";
         $db   = $this->connect();
         $stmt = $db->prepare($sql);
@@ -28,8 +28,8 @@ class Tourist extends Database {
     public function getTouristPWDStatusByTouristID($tourist_ID) {
         $db   = $this->connect();
         $sql  = "SELECT ul.person_isPWD
-                 FROM Account_Info ai
-                 JOIN User_Login ul ON ul.user_ID = ai.user_ID 
+                 FROM account_info ai
+                 JOIN user_login ul ON ul.user_ID = ai.user_ID 
                  WHERE ai.account_ID = :id";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':id', $tourist_ID, PDO::PARAM_INT);
@@ -96,9 +96,9 @@ class Tourist extends Database {
  
     public function getEmailByID(int $tourist_ID): ?string {
         $sql = " SELECT ci.contactinfo_email 
-            FROM Account_Info ai
-            INNER JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-            INNER JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+            FROM account_info ai
+            INNER JOIN user_login ul ON ai.user_ID = ul.user_ID 
+            INNER JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
             WHERE ai.account_ID = :tourist_ID
             LIMIT 1 ";
 
@@ -116,9 +116,9 @@ class Tourist extends Database {
  
     public function getFullNameByID(int $tourist_ID): ?string  {
         $sql = " SELECT CONCAT(ul.name_first, ' ', ul.name_last) AS fullname
-            FROM Account_Info ai
-            INNER JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-            INNER JOIN Name_Info ni ON ul.name_ID = ul.name_ID
+            FROM account_info ai
+            INNER JOIN user_login ul ON ai.user_ID = ul.user_ID 
+            INNER JOIN name_info ni ON ul.name_ID = ul.name_ID
             WHERE ai.account_ID = :tourist_ID
             LIMIT 1 ";
 
@@ -203,25 +203,25 @@ class Tourist extends Database {
                     ci.emergency_Relationship,
                     epn.phone_number AS emergency_phone
                     
-                FROM Account_Info ai
+                FROM account_info ai
                 
                 -- Join User and Person
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+                JOIN user_login ul ON ai.user_ID = ul.user_ID 
                 -- Join Contact Info
-                LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+                LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
                 
                 -- Join Phone Number and Country
-                LEFT JOIN Phone_Number pn ON ci.phone_ID = pn.phone_ID
-                LEFT JOIN Country c ON pn.country_ID = c.country_ID 
-                LEFT JOIN Barangay b ON ci.barangay_ID = b.barangay_ID
-                LEFT JOIN City city ON b.city_ID = city.city_ID
-                LEFT JOIN Province prov ON city.province_ID = prov.province_ID
-                LEFT JOIN Region reg ON prov.region_ID = reg.region_ID
+                LEFT JOIN phone_number pn ON ci.phone_ID = pn.phone_ID
+                LEFT JOIN country c ON pn.country_ID = c.country_ID 
+                LEFT JOIN barangay b ON ci.barangay_ID = b.barangay_ID
+                LEFT JOIN city city ON b.city_ID = city.city_ID
+                LEFT JOIN province prov ON city.province_ID = prov.province_ID
+                LEFT JOIN region reg ON prov.region_ID = reg.region_ID
                  
-                LEFT JOIN Phone_Number epn ON ci.phone_ID = epn.phone_ID
+                LEFT JOIN phone_number epn ON ci.phone_ID = epn.phone_ID
                 
                 WHERE ai.account_ID = :tourist_ID
-                AND ai.role_ID = (SELECT role_ID FROM Role WHERE role_name = 'Tourist')";
+                AND ai.role_ID = (SELECT role_ID FROM role WHERE role_name = 'Tourist')";
         
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute([':tourist_ID' => $tourist_ID]);
@@ -235,11 +235,11 @@ class Tourist extends Database {
                     ci.contactinfo_email,
                     pn.phone_number
                     
-                FROM Account_Info ai
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-                LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+                FROM account_info ai
+                JOIN user_login ul ON ai.user_ID = ul.user_ID 
+                LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
                 
-                LEFT JOIN Phone_Number pn ON ci.phone_ID = pn.phone_ID
+                LEFT JOIN phone_number pn ON ci.phone_ID = pn.phone_ID
                 
                 WHERE ai.account_ID = :tourist_ID";
         
@@ -260,16 +260,16 @@ class Tourist extends Database {
                         c.country_name
                     ) AS full_address
                     
-                FROM Account_Info ai
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-                JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
-                LEFT JOIN Address_Info addr ON ci.address_ID = ci.address_ID
-                LEFT JOIN Barangay b ON ci.barangay_ID = b.barangay_ID
-                LEFT JOIN City city ON b.city_ID = city.city_ID
-                LEFT JOIN Province prov ON city.province_ID = prov.province_ID
-                LEFT JOIN Region reg ON prov.region_ID = reg.region_ID
-                LEFT JOIN Phone_Number pn ON ci.phone_ID = pn.phone_ID
-                LEFT JOIN Country c ON pn.country_ID = c.country_ID
+                FROM account_info ai
+                JOIN user_login ul ON ai.user_ID = ul.user_ID 
+                JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+                LEFT JOIN address_info addr ON ci.address_ID = ci.address_ID
+                LEFT JOIN barangay b ON ci.barangay_ID = b.barangay_ID
+                LEFT JOIN city city ON b.city_ID = city.city_ID
+                LEFT JOIN province prov ON city.province_ID = prov.province_ID
+                LEFT JOIN region reg ON prov.region_ID = reg.region_ID
+                LEFT JOIN phone_number pn ON ci.phone_ID = pn.phone_ID
+                LEFT JOIN country c ON pn.country_ID = c.country_ID
                 
                 WHERE ai.account_ID = :tourist_ID";
         
@@ -292,13 +292,13 @@ class Tourist extends Database {
                     pt.transaction_total_amount,
                     tp.pricing_currency
                     
-                FROM Booking b
-                JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
-                LEFT JOIN Guide g ON tp.guide_ID = g.guide_ID
-                LEFT JOIN Account_Info gai ON g.account_ID = gai.account_ID
-                LEFT JOIN User_Login ul ON gai.user_ID = ul.user_ID 
+                FROM booking b
+                JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+                LEFT JOIN guide g ON tp.guide_ID = g.guide_ID
+                LEFT JOIN account_info gai ON g.account_ID = gai.account_ID
+                LEFT JOIN user_login ul ON gai.user_ID = ul.user_ID 
                 
-                LEFT JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+                LEFT JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
                 
                 WHERE b.tourist_ID = :tourist_ID
                 ORDER BY b.booking_created_at DESC";
@@ -315,8 +315,8 @@ class Tourist extends Database {
                     COUNT(CASE WHEN b.booking_status = 'Cancelled' THEN 1 END) AS cancelled_bookings,
                     IFNULL(SUM(pt.transaction_total_amount), 0) AS total_spent
                     
-                FROM Booking b
-                LEFT JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+                FROM booking b
+                LEFT JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
                 
                 WHERE b.tourist_ID = :tourist_ID";
         
@@ -332,14 +332,14 @@ class Tourist extends Database {
             
             if (isset($data['name_first']) || isset($data['name_middle']) || isset($data['name_last']) || isset($data['name_suffix']) || isset($data['person_Nationality']) || isset($data['person_Gender']) || isset($data['person_DateOfBirth'])) {
                 $sqlIds = "SELECT u.user_ID, ul.name_ID
-                           FROM Account_Info ai
-                           JOIN User_Login ul ON ai.user_ID = ul.user_ID 
+                           FROM account_info ai
+                           JOIN user_login ul ON ai.user_ID = ul.user_ID 
                            WHERE ai.account_ID = :tourist_ID";
                 $stmtIds = $db->prepare($sqlIds);
                 $stmtIds->execute([':tourist_ID' => $tourist_ID]);
                 $ids = $stmtIds->fetch(PDO::FETCH_ASSOC);
                 if ($ids) {
-                    $sqlName = "UPDATE Name_Info SET
+                    $sqlName = "UPDATE name_info SET
                         name_first = COALESCE(:name_first, name_first),
                         name_middle = COALESCE(:name_middle, name_middle),
                         name_last = COALESCE(:name_last, name_last),
@@ -353,7 +353,7 @@ class Tourist extends Database {
                         ':name_last' => $data['name_last'] ?? null,
                         ':name_suffix' => $data['name_suffix'] ?? null,
                     ]);
-                    $sqlPerson = "UPDATE Person SET
+                    $sqlPerson = "UPDATE person SET
                         person_Nationality = COALESCE(:nationality, person_Nationality),
                         person_Gender = COALESCE(:gender, person_Gender),
                         person_DateOfBirth = COALESCE(:dob, person_DateOfBirth)
@@ -369,10 +369,10 @@ class Tourist extends Database {
             }
             
             if (isset($data['contactinfo_email'])) {
-                $sql = "UPDATE Contact_Info ci
-                        JOIN Person p ON ci.contactinfo_ID = ul.contactinfo_ID
-                        JOIN User_Login ul ON ul.person_ID = ul.person_ID
-                        JOIN Account_Info ai ON ul.user_ID = ai.user_ID
+                $sql = "UPDATE contact_info ci
+                        JOIN person p ON ci.contactinfo_ID = ul.contactinfo_ID
+                        JOIN user_login ul ON ul.person_ID = ul.person_ID
+                        JOIN account_info ai ON ul.user_ID = ai.user_ID
                         SET ci.contactinfo_email = :email
                         WHERE ai.account_ID = :tourist_ID";
                 
@@ -404,9 +404,9 @@ class Tourist extends Database {
                     tp.pricing_currency
                     
                     
-                FROM Booking b
-                JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
-                LEFT JOIN Payment_Transaction pt ON b.booking_ID = pt.booking_ID
+                FROM booking b
+                JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+                LEFT JOIN payment_transaction pt ON b.booking_ID = pt.booking_ID
                 JOIN booking_bundle bb ON b.booking_ID = bb.booking_ID
                 JOIN companion c ON bb.companion_ID = c.companion_ID
                 
@@ -419,7 +419,7 @@ class Tourist extends Database {
     }
 
     public function getGuideRating($guide_ID){
-        $sql = "SELECT * FROM Account_Info ai
+        $sql = "SELECT * FROM account_info ai
             JOIN guide g ON ai.account_ID = g.guide_ID
             WHERE g.guide_ID = :guide_ID";
         $stmt = $this->connect()->prepare($sql);
@@ -435,9 +435,9 @@ class Tourist extends Database {
                     ul.name_first,
                     ul.name_last,
                     ci.contactinfo_email
-                FROM Account_Info ai
-                JOIN User_Login ul ON ai.user_ID = ul.user_ID 
-                LEFT JOIN Contact_Info ci ON ul.contactinfo_ID = ci.contactinfo_ID
+                FROM account_info ai
+                JOIN user_login ul ON ai.user_ID = ul.user_ID 
+                LEFT JOIN contact_info ci ON ul.contactinfo_ID = ci.contactinfo_ID
                 
                 WHERE ai.account_ID = :account_ID";
         
@@ -448,10 +448,10 @@ class Tourist extends Database {
 
     public function tourSpotsExplored($account_ID){
         $sql = "SELECT COUNT(DISTINCT ts.spots_ID) AS spots_explored
-            FROM Booking b
-            JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
-            JOIN Tour_Package_Spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
-            JOIN Tour_Spots ts ON tps.spots_ID = ts.spots_ID
+            FROM booking b
+            JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            JOIN tour_package_spots tps ON tp.tourpackage_ID = tps.tourpackage_ID
+            JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID
             WHERE b.tourist_ID = :account_ID AND b.booking_status = 'Completed'";
         $stmt = $this->connect()->prepare($sql);
         $stmt->bindParam(':account_ID', $account_ID, PDO::PARAM_INT);
@@ -462,7 +462,7 @@ class Tourist extends Database {
 
     public function touristAveRating($account_ID){
         $sql = "SELECT AVG(r.rating_value) AS average_rating
-            FROM Rating r
+            FROM rating r
             WHERE r.rater_account_ID = :account_ID";
         $stmt = $this->connect()->prepare($sql);
         $stmt->bindParam(':account_ID', $account_ID, PDO::PARAM_INT);

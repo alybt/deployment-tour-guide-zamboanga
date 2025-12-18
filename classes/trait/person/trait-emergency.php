@@ -10,8 +10,8 @@ trait EmergencyTrait {
 
         // Try to find existing
         $sql = "SELECT ei.emergency_ID
-                FROM Emergency_Info ei
-                JOIN Phone_Number pn ON ei.phone_ID = pn.phone_ID
+                FROM emergency_info ei
+                JOIN phone_number pn ON ei.phone_ID = pn.phone_ID
                 WHERE pn.country_ID = :country_ID
                 AND pn.phone_number = :phone_number
                 AND ei.emergency_Name = :ename
@@ -35,7 +35,7 @@ trait EmergencyTrait {
             return false;
         }
 
-        $sql = "INSERT INTO Emergency_Info (phone_ID, emergency_Name, emergency_Relationship)
+        $sql = "INSERT INTO emergency_info (phone_ID, emergency_Name, emergency_Relationship)
                 VALUES (:phone_ID, :ename, :erelationship)";
         $q = $db->prepare($sql);
         $q->execute([
@@ -57,7 +57,7 @@ trait EmergencyTrait {
         $count = $query_check->fetch(PDO::FETCH_ASSOC)['total'];
 
         if($count == 0){
-            $sql_delete = "DELETE FROM Emergency_Info WHERE emergency_ID = :id";
+            $sql_delete = "DELETE FROM emergency_info WHERE emergency_ID = :id";
             $query_delete = $db->prepare($sql_delete);
             $query_delete->bindParam(":id", $emergency_ID);
             $query_delete->execute();

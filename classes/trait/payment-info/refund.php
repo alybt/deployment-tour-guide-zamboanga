@@ -1,6 +1,6 @@
 <?php
 
-trait Refund{
+trait refund{
 
 
     public function getAllRefundCategories($role_ID){
@@ -21,7 +21,7 @@ trait Refund{
 
     public function addRefund($transaction_ID, $categoryrefund_ID,$refund_reason, $refund_status, $refund_processingfee, $refund_refundfee, $refund_total_amount, $db){
        try {
-            $sql = "INSERT INTO Refund (transaction_ID,	categoryrefund_ID,	refund_reason,	refund_status,	refund_processingfee,	refund_refundfee,	refund_total_amount) 
+            $sql = "INSERT INTO refund (transaction_ID,	categoryrefund_ID,	refund_reason,	refund_status,	refund_processingfee,	refund_refundfee,	refund_total_amount) 
             VALUES (:transaction_ID, :categoryrefund_ID,:refund_reason, :refund_status, :refund_processingfee,	:refund_refundfee, :refund_total_amount)";
             $db = $this->connect();
             $query = $db->prepare($sql);

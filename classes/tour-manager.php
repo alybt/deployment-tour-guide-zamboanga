@@ -4,7 +4,7 @@ require_once __DIR__ . "/../config/database.php";
 require_once "trait/tour/tour-packages.php";
 require_once "trait/tour/tour-spots.php";
 require_once "trait/tour/tour-packagespots.php";
-// schedule, pricing, and people tables are flattened into Tour_Package
+// schedule, pricing, and people tables are flattened into tour_package
 
 class TourManager extends Database {
     use TourPackagesTrait;
@@ -57,7 +57,7 @@ class TourManager extends Database {
     }
 
 
-    // Update flattened Tour_Package plus its spots
+    // Update flattened tour_package plus its spots
     public function updateTourPackagesAndItsSpots($packagespot_ID, $tour_spots, $packagespots_activityname, $packagespots_starttime, $packagespots_endtime, $packagespot_day, $tourpackage_ID, $guide_ID, $name, $desc, $days, $numberofpeople_maximum, $numberofpeople_based, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount) {
         try {
             $db = $this->connect();
@@ -139,7 +139,7 @@ class TourManager extends Database {
         try {
  
             $this->deleteTourPackageSpotsByTourPackageID($tourpackage_ID, $db);  
-            $sql = "DELETE FROM Tour_Package WHERE tourpackage_ID = :tourpackage_ID";
+            $sql = "DELETE FROM tour_package WHERE tourpackage_ID = :tourpackage_ID";
             $query = $db->prepare($sql);
             $query->bindParam(":tourpackage_ID", $tourpackage_ID);
             $query->execute();
@@ -164,8 +164,8 @@ class TourManager extends Database {
     public function guideAccountInfo(){
         
         $sql = "SELECT a.account_profilepic, a.account_aboutme, a.account_bio, a.account_nickname, a.account_rating_score
-            FROM Account_Info a
-            INNER JOIN Guide g ON a.account_ID = g.account_ID
+            FROM account_info a
+            INNER JOIN guide g ON a.account_ID = g.account_ID
             WHERE g.guide_ID = :guide_ID";
         $db = $this->connect();
         $stmt = $db->prepare($sql);
@@ -177,8 +177,8 @@ class TourManager extends Database {
 
     public function upcomingToursCount($guide_ID){
         $sql = "SELECT COUNT(*) as upcoming_count
-            FROM Bookings b
-            INNER JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            FROM bookings b
+            INNER JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
             WHERE tp.guide_ID = :guide_ID AND b.booking_status = 'Confirmed' AND b.tour_date >= CURDATE()";
         $db = $this->connect();
         $stmt = $db->prepare($sql);
@@ -191,8 +191,8 @@ class TourManager extends Database {
 
     public function upcomingToursCountForTourist($tourist_ID){
         $sql = "SELECT COUNT(*) as upcoming_count
-            FROM Booking b
-            INNER JOIN Tour_Package tp ON b.tourpackage_ID = tp.tourpackage_ID
+            FROM booking b
+            INNER JOIN tour_package tp ON b.tourpackage_ID = tp.tourpackage_ID
             WHERE b.tourist_ID = :tourist_ID AND b.booking_status = 'Confirmed' AND b.booking_start_date >= CURDATE()";
         $db = $this->connect();
         $stmt = $db->prepare($sql);
@@ -204,7 +204,7 @@ class TourManager extends Database {
     }
 
     public function updateAllRatingScore() {
-        $sql = "UPDATE Account_Info AI
+        $sql = "UPDATE account_info AI
                 LEFT JOIN ( 
                     SELECT
                         rating_account_ID AS account_id,

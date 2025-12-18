@@ -13,7 +13,7 @@ trait PayoutTrait{
         $total_amount_float = floatval($transaction_total_amount);  
         $platform_fee = $total_amount_float * 0.20;  
         $earning_amount = $total_amount_float - $platform_fee;  
-        $sql = "INSERT INTO Guide_Earnings (
+        $sql = "INSERT INTO guide_earning (
                     transaction_ID, 
                     platform_fee, 
                     earning_amount, 
@@ -35,7 +35,7 @@ trait PayoutTrait{
         if ($query->execute()) {
             return true;
         } else { 
-            error_log("Failed to insert Guide_Earnings for #{$transaction_ID}: " . implode(", ", $query->errorInfo()));
+            error_log("Failed to insert guide_earning for #{$transaction_ID}: " . implode(", ", $query->errorInfo()));
             return false;
         }
     }
@@ -43,7 +43,7 @@ trait PayoutTrait{
     public function updateTransaction($transaction_ID){  
         $db = $this->connect(); 
         
-        $sql = "UPDATE Payment_Transaction 
+        $sql = "UPDATE payment_transaction 
                 SET transaction_status = 'Approved',  
                     transaction_updated_date = NOW()
                 WHERE transaction_ID = :transaction_ID";
@@ -54,7 +54,7 @@ trait PayoutTrait{
         if ($query->execute()) {
             return true;
         } else {
-            error_log("Failed to update Payment_Transaction status for #{$transaction_ID}: " . implode(", ", $query->errorInfo()));
+            error_log("Failed to update payment_transaction status for #{$transaction_ID}: " . implode(", ", $query->errorInfo()));
             return false;
         }
     }

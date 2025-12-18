@@ -19,7 +19,7 @@ trait TourPackageSpot {
         $db->beginTransaction();
 
         try {
-            $sql = "INSERT INTO Tour_Package_Spots 
+            $sql = "INSERT INTO tour_package_spots 
                         (tourpackage_ID, spots_ID, packagespot_activityname,
                          packagespot_starttime, packagespot_endtime, packagespot_day)
                     VALUES 
@@ -58,7 +58,7 @@ trait TourPackageSpot {
     }
 
     public function getSpotsByPackageID($tourpackage_ID){
-        $sql = "SELECT * FROM Tour_Package_Spots WHERE tourpackage_ID = :tourpackage_ID";
+        $sql = "SELECT * FROM tour_package_spots WHERE tourpackage_ID = :tourpackage_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
         $query->bindParam(':tourpackage_ID', $tourpackage_ID);
@@ -69,7 +69,7 @@ trait TourPackageSpot {
 
     public function getSpotsByPackage($tourpackage_ID) {
         $sql = "SELECT tps.packagespot_ID, tps.packagespot_activityname, tps.packagespot_starttime, tps.packagespot_endtime, ts.spots_ID, ts.spots_name, ts.spots_description
-                FROM Tour_Package_Spots tps LEFT JOIN Tour_Spots ts ON tps.spots_ID = ts.spots_ID
+                FROM tour_package_spots tps LEFT JOIN tour_spots ts ON tps.spots_ID = ts.spots_ID
                 WHERE tps.tourpackage_ID = :tourpackage_ID";
         $db = $this->connect();
         $query = $db->prepare($sql);
@@ -81,7 +81,7 @@ trait TourPackageSpot {
 
     public function getPackagesBySpot($spotID) {
         $sql = "SELECT tp.* 
-                FROM Tour_Package_Spots tps
+                FROM tour_package_spots tps
                 JOIN Tour_Package tp ON tps.tourpackage_ID = tp.tourpackage_ID
                 WHERE tps.spots_ID = ?";
         $query = $this->conn->prepare($sql);
@@ -97,7 +97,7 @@ trait TourPackageSpot {
     }
 
     public function deleteTourPackageSpotsByTourPackageID($tourpackage_ID, $db){
-        $sql = "DELETE FROM Tour_Package_Spots WHERE tourpackage_ID = :tourpackage_ID";
+        $sql = "DELETE FROM tour_package_spots WHERE tourpackage_ID = :tourpackage_ID";
         
         try {
             $query = $db->prepare($sql);

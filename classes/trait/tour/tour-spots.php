@@ -32,7 +32,7 @@ trait TourSpotsTrait {
     }
 
     public function getTourSpotById($spots_ID) {
-        $sql = "SELECT * FROM Tour_Spots WHERE spots_ID = :spots_ID";
+        $sql = "SELECT * FROM tour_spots WHERE spots_ID = :spots_ID";
         $query = $this->connect()->prepare($sql);
         $query->bindParam(":spots_ID", $spots_ID);
         
@@ -103,7 +103,7 @@ trait TourSpotsTrait {
     }
 
     public function deleteTourSpot($spots_ID) {
-        $sql = "DELETE FROM Tour_Spots WHERE spots_ID = :spots_ID";
+        $sql = "DELETE FROM tour_spots WHERE spots_ID = :spots_ID";
         
         try {
             $query = $this->connect()->prepare($sql);

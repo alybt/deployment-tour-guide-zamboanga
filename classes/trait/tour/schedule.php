@@ -10,7 +10,7 @@ trait ScheduleTrait {
                 return false;
             }
 
-            $sql = "INSERT INTO Schedule (numberofpeople_ID, schedule_days)
+            $sql = "INSERT INTO tour_package (numberofpeople_ID, schedule_days)
                     VALUES (:numberofpeople_ID, :days)";
             $query = $db->prepare($sql);
             $query->bindParam(':numberofpeople_ID', $numberofpeople_ID);
@@ -20,7 +20,7 @@ trait ScheduleTrait {
         
     }
 
-    public function updateSchedule($schedule_ID, $days, $numberofpeople_ID, $numberofpeople_maximum, $numberofpeople_based, $pricing_ID, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db) {
+    public function updateSchedule($tourpackage_ID, $days, $numberofpeople_ID, $numberofpeople_maximum, $numberofpeople_based, $pricing_ID, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db) {
         
             $result = $this->updatePeople($numberofpeople_ID, $numberofpeople_maximum, $numberofpeople_based, $pricing_ID, $currency, $forAdult, $forChild, $forYoungAdult, $forSenior, $forPWD, $includeMeal, $mealFee, $transportFee, $discount, $db);
             
@@ -28,10 +28,10 @@ trait ScheduleTrait {
                 return false;
             }
 
-            $sql = "UPDATE Schedule SET numberofpeople_ID = :numberofpeople_ID, schedule_days = :days 
+            $sql = "UPDATE tour_package SET numberofpeople_ID = :numberofpeople_ID, schedule_days = :days 
             WHERE schedule_ID = :schedule_ID";
             $query = $db->prepare($sql);
-            $query->bindParam(':schedule_ID', $schedule_ID);
+            $query->bindParam(':schedule_ID', $tourpackage_ID);
             $query->bindParam(':numberofpeople_ID', $numberofpeople_ID);
             $query->bindParam(':days', $days);
             $query->execute();
@@ -41,19 +41,19 @@ trait ScheduleTrait {
 
     public function getScheduleByID($scheduleID) {
         $db = $this->connect();
-        $sql = "SELECT * FROM Schedule WHERE schedule_ID = :scheduleID";
+        $sql = "SELECT * FROM tour_package WHERE schedule_ID = :scheduleID";
         $query = $db->prepare($sql);
         $query->bindParam(':scheduleID', $scheduleID);
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function deleteScheduleByID($schedule_ID, $db){
-        $sql = "DELETE FROM Schedule WHERE schedule_ID = :schedule_ID";
+    public function deleteScheduleByID($tourpackage_ID, $db){
+        $sql = "DELETE FROM tour_package WHERE schedule_ID = :schedule_ID";
         
         try {
             $query = $db->prepare($sql);
-            $query->bindParam(":schedule_ID ", $schedule_ID );
+            $query->bindParam(":schedule_ID ", $tourpackage_ID );
             
             if ($query->execute()) {
                 return true;
@@ -66,9 +66,9 @@ trait ScheduleTrait {
         }
     }
 
-    // public function  getPeopleIDInScheduleByScheduleID($schedule_ID){
+    // public function  getPeopleIDInScheduleByScheduleID($tourpackage_ID){
     //     $db = $this->connect();
-    //     $sql = "SELECT numberofpeople_ID FROM Schedule WHERE schedule_ID = :scheduleID";
+    //     $sql = "SELECT numberofpeople_ID FROM tour_package WHERE schedule_ID = :scheduleID";
     //     $query = $db->prepare($sql);
     //     $query->bindParam(':scheduleID', $scheduleID);
     //     $query->execute();

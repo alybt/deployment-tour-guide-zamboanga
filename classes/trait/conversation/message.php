@@ -17,7 +17,7 @@ trait MessageTrait{
                 throw new Exception("Unable to insert message");
             }
  
-            $sql = "UPDATE Conversation 
+            $sql = "UPDATE conversation 
                     SET last_message_ID = :message_ID 
                     WHERE conversation_ID = :conversation_ID";
             $stmt = $db->prepare($sql);
@@ -30,14 +30,14 @@ trait MessageTrait{
 
         } catch (Exception $e) {
             $db->rollBack();
-            error_log("Conversation error: " . $e->getMessage());
+            error_log("conversation error: " . $e->getMessage());
             return null;
         }
     } 
 
     public function addgetUsers($user1_ID, $user2_ID, $db) { 
         $sql = "SELECT conversation_ID
-                FROM Conversation
+                FROM conversation
                 WHERE (user1_account_ID = :u1 AND user2_account_ID = :u2)
                 OR (user1_account_ID = :u2a AND user2_account_ID = :u1a)";
         $stmt = $db->prepare($sql);
@@ -53,7 +53,7 @@ trait MessageTrait{
         }
 
         // Create conversation
-        $sqlInsert = "INSERT INTO Conversation (user1_account_ID, user2_account_ID)
+        $sqlInsert = "INSERT INTO conversation (user1_account_ID, user2_account_ID)
                     VALUES (:u1, :u2)";
         $stmt = $db->prepare($sqlInsert);
         $stmt->bindParam(':u1', $user1_ID);
@@ -64,7 +64,7 @@ trait MessageTrait{
     } 
 
     public function addMessage($conversation_ID, $sender_ID, $message, $db) {
-        $sql = "INSERT INTO Message (conversation_ID, sender_account_ID, message_content)
+        $sql = "INSERT INTO message (conversation_ID, sender_account_ID, message_content)
                 VALUES (:conversation_ID, :sender_ID, :message)";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':conversation_ID', $conversation_ID, PDO::PARAM_INT);
@@ -93,14 +93,14 @@ trait MessageTrait{
 
                 EXISTS (
                     SELECT 1
-                    FROM Message m2
+                    FROM message m2
                     WHERE m2.conversation_ID = c.conversation_ID
                     AND m2.sender_account_ID != :uid2
                     AND m2.is_read = 0
                 ) AS has_unread
 
-            FROM Conversation c
-            LEFT JOIN Message m 
+            FROM conversation c
+            LEFT JOIN message m 
                 ON m.message_ID = c.last_message_ID
 
             WHERE c.user1_account_ID = :uid3
@@ -133,7 +133,7 @@ trait MessageTrait{
                 message_content,
                 is_read,
                 sent_at
-            FROM Message
+            FROM message
             WHERE conversation_ID = :conversation_ID
             ORDER BY sent_at ASC
         ";
@@ -150,7 +150,7 @@ trait MessageTrait{
         $db = $this->connect();
 
         $sql = "
-            UPDATE Message
+            UPDATE message
             SET is_read = 1
             WHERE conversation_ID = :conversation_ID
             AND sender_account_ID != :account_ID

@@ -15,8 +15,8 @@ class Auth extends Database {
                 r.role_ID, 
                 ai.account_status,
                 ai.account_ID
-            FROM User_Login ul
-            JOIN Account_Info ai ON ul.user_ID = ai.user_ID
+            FROM user_login ul
+            JOIN account_info ai ON ul.user_ID = ai.user_ID
             JOIN Role r ON ai.role_ID = r.role_ID
             WHERE ul.user_username = :username
             LIMIT 1";
@@ -78,16 +78,15 @@ class Auth extends Database {
                 a.account_created_at,
                 u.user_username AS username,
                 u.user_ID AS user_ID,
-                p.person_ID AS person_ID,
+                ul.person_ID AS person_ID,
                 CASE 
                     WHEN ad.admin_ID IS NOT NULL THEN 'Admin'
                     WHEN g.guide_ID IS NOT NULL THEN 'Guide'
                     ELSE 'Tourist'
                 END AS account_type
-            FROM Account_Info a
-            JOIN User_Login u ON a.user_ID = u.user_ID
-            JOIN Person p ON u.person_ID = p.person_ID
-            JOIN Name_Info n ON p.name_ID = n.name_ID
+            FROM account_info a
+            JOIN user_login u ON a.user_ID = u.user_ID
+            JOIN Person p ON u.person_ID = ul.person_ID 
             JOIN Role r ON a.role_ID = r.role_ID
             LEFT JOIN Admin ad ON a.account_ID = ad.account_ID
             LEFT JOIN Guide g ON a.account_ID = g.account_ID

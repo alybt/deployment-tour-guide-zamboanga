@@ -45,9 +45,9 @@ class Admin extends Database {
             GROUP_CONCAT(DISTINCT a.role_ID ORDER BY a.role_ID) AS role_ID,
             GROUP_CONCAT(DISTINCT a.account_ID ORDER BY a.account_ID) AS account_ID,
             CONCAT_WS(' ', u.name_first, u.name_last) AS full_name
-            FROM User_Login      AS u
-            LEFT JOIN Account_Info AS a ON a.user_ID = u.user_ID
-            LEFT JOIN Role         AS r ON a.role_ID = r.role_ID  
+            FROM user_login      AS u
+            LEFT JOIN account_info AS a ON a.user_ID = u.user_ID
+            LEFT JOIN role         AS r ON a.role_ID = r.role_ID  
             WHERE a.role_ID != 1
             GROUP BY u.user_ID, u.user_username";
         $db = $this->connect();
@@ -77,9 +77,9 @@ class Admin extends Database {
             GROUP_CONCAT(DISTINCT a.role_ID ORDER BY a.role_ID) AS role_ID,
             GROUP_CONCAT(DISTINCT a.account_ID ORDER BY a.account_ID) AS account_ID,
             u.name_first, u.name_last
-            FROM User_Login      AS u
-            LEFT JOIN Account_Info AS a ON a.user_ID = u.user_ID
-            LEFT JOIN Role         AS r ON a.role_ID = r.role_ID 
+            FROM user_login      AS u
+            LEFT JOIN account_info AS a ON a.user_ID = u.user_ID
+            LEFT JOIN role         AS r ON a.role_ID = r.role_ID 
             WHERE u.user_ID = :user_ID
             GROUP BY u.user_ID, u.user_username";
         $db = $this->connect();
@@ -99,7 +99,7 @@ class Admin extends Database {
             // Update user login info
             if (!empty($password)) {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $sql = "UPDATE User_Login 
+                $sql = "UPDATE user_login 
                         SET name_first = :firstname, 
                             name_last = :lastname, 
                             user_username = :username, 
@@ -108,7 +108,7 @@ class Admin extends Database {
                 $stmt = $db->prepare($sql);
                 $stmt->bindParam(':password', $hashedPassword);
             } else {
-                $sql = "UPDATE User_Login 
+                $sql = "UPDATE user_login 
                         SET name_first = :firstname, 
                             name_last = :lastname, 
                             user_username = :username 
@@ -134,7 +134,7 @@ class Admin extends Database {
                         if ($status === 'Deleted') {
                             // Soft delete
                             $stmt = $db->prepare("
-                                UPDATE Account_Info 
+                                UPDATE account_info 
                                 SET account_status = 'Deleted', 
                                     is_deleted = NOW()
                                 WHERE accountinfo_ID = ?
@@ -143,7 +143,7 @@ class Admin extends Database {
                         } else {
                             // Regular update (also clear is_deleted if previously deleted)
                             $stmt = $db->prepare("
-                                UPDATE Account_Info 
+                                UPDATE account_info 
                                 SET role_ID = ?, 
                                     account_status = ?,
                                     is_deleted = NULL
@@ -169,8 +169,8 @@ class Admin extends Database {
         $db = $this->connect();
         $sql = "SELECT ai.account_ID, ai.role_ID, ai.account_status, ai.is_deleted,
                    r.role_name
-            FROM Account_Info ai
-            JOIN Role r ON ai.role_ID = r.role_ID
+            FROM account_info ai
+            JOIN role r ON ai.role_ID = r.role_ID
             WHERE ai.user_ID = ?
             ORDER BY ai.account_ID";
         $stmt = $db->prepare($sql);
@@ -203,7 +203,7 @@ class Admin extends Database {
         try { 
              if (!empty($password)) {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $sql = "UPDATE User_Login 
+                $sql = "UPDATE user_login 
                         SET name_first = :firstname, 
                             name_last = :lastname, 
                             user_username = :username, 
@@ -212,7 +212,7 @@ class Admin extends Database {
                 $stmt = $db->prepare($sql);
                 $stmt->bindParam(':password', $hashedPassword);
             } else {
-                $sql = "UPDATE User_Login 
+                $sql = "UPDATE user_login 
                         SET name_first = :firstname, 
                             name_last = :lastname, 
                             user_username = :username 
